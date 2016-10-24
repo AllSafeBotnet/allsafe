@@ -1,11 +1,13 @@
+#!/usr/bin/python3
+
 """
 This is the startup script for the botnet. Please note that the software is developed under 
-Python 3.5.x version of the interpreter. 
+Python 3.4.x version of the interpreter. 
 
 Authors:    Alessio "Tyrell" Moretti & Federico "Elliot" Vagnoni
 Version:    0.1.0
 Created:    24 October 2016
-Modilfied:  24 October 2016
+Modified:   24 October 2016
 """
 
 
