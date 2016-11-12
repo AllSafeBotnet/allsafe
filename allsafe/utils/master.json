@@ -1,0 +1,26 @@
+/* this is simply the master configuration JSON file */
+{
+    "last_modified" : "1478636841",
+    "cc_server"     : "https://botnet.fsociety.com",
+    "user_agent_b"  : "ELLIOT",
+    "log_file"      : "./path/to/file.txt",
+
+    "targets" : [
+        {
+            "url" : "https://www.evilcorp.com",
+            "user_agent" : "BOTNET_AGENT",
+            "period" : "1",
+            "max_count" : "10",
+
+            "action_conditions" : {
+                "AM" : "1",
+                "PM" : "1",
+                "attack_time": "18-20",
+                "week_mask" : "mtwtfss",
+                "avoid_day" : ["01", "03", "25"]
+            },
+
+            "sessions" : 1
+        }
+    ]
+}
