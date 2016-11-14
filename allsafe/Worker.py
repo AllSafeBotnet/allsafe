@@ -8,12 +8,17 @@ Created:    24 October 2016
 Modified:   13 November 2016
 """
 
-import threading
+from threading import Thread
 from datetime import datetime, date
+from time import sleep as threadSleep
+
+from allsafe.Request import Request
+
 from allsafe.utils.config import validateConfigFile
 from allsafe.utils.log import log
 
-class AllSafeWorker(threading.Thread):
+
+class AllSafeWorker(Thread):
     def __init__(self, wid, name, config):
         """
         This class extends the implementation of threading.Thread to handle a HTTP GET request.
@@ -24,8 +29,8 @@ class AllSafeWorker(threading.Thread):
         @param: config, dictionary - the configuration parameter for this thread
         """
         # calling superclass init method
-        threading.Thread._init__(self)
-        # setting up threading attributes
+        Thread._init__(self)
+        # setting up threading attribute
         self._wid     = wid
         self._name    = name
         # setting up connection parameters from dictionary
@@ -37,7 +42,7 @@ class AllSafeWorker(threading.Thread):
             self._maxcount = int(config['maxcount'])
             self._sessions = config['sessions']
         except ValueError:
-            raise Exception("Invalid configuration for worker - period / maxcount / sessions not properly formatted")
+            raise Exception("WORKER"+str(wid)+"- Invalid configuration for worker - period / maxcount / sessions not properly formatted")
         # configuration - action 
         self._action   = config['action_conditions']
 
@@ -51,7 +56,7 @@ class AllSafeWorker(threading.Thread):
         workerTarget += " - AGENT: "   + self._agent
 
     
-    def carryAttach(self):
+    def carryAttack(self):
         """ 
         This method can be used to verify if the attack can be carried according the action conditions
         presetted in the config file
@@ -85,9 +90,38 @@ class AllSafeWorker(threading.Thread):
                 return 12 < utcnow.hour <= 24
 
 
-
     def run(self):
-        
+        """ 
+        This method is the one executed by the worker thread when it is started by the master thread.
+        It check if it is possible to carry the attack, then start performing requests, carrying it on
+        according to the configuration file.
+        """
+        # check if the attack can be carried on
+        greenlight = self.carryAttack()
+
+        while self._sessions > 0:
+            if greenlight:
+                # performing the attack
+                for i in range(0, self._maxcount):
+                    # instantiate request class 
+                    req = Request(self._request)
+                    # running request object 
+                    try:
+                        req.perform()
+                    except ValueError:
+                        continue
+                    # thread safe sleeping for the specified interval
+                    threadSleep(self._period)
+
+                # decreasing session counter
+                self._sessions  -= 1
+                if self._sessions == 0: 
+                    break
+                else:
+                    #TODO performing check for config updates
+            
+            greenlight = self.carryAttack()
+
 
 
 class AllSafeWorkerMaster():
