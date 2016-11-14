@@ -9,6 +9,7 @@ Modified:   13 November 2016
 """
 
 import threading
+from datetime import datetime, date
 from allsafe.utils.config import validateConfigFile
 from allsafe.utils.log import log
 
@@ -29,11 +30,16 @@ class AllSafeWorker(threading.Thread):
         self._name    = name
         # setting up connection parameters from dictionary
         # configuration - connection
-        self._url     = config['url']
-        self._agent   = config['agent']
-        # configuration - periodicity
-        self._period   = int(config['period'])
-        self._maxcount = int(config['maxcount'])
+        self._request = config['request_params']
+        # configuration - periodicity and sessions
+        try:
+            self._period   = int(config['period'])
+            self._maxcount = int(config['maxcount'])
+            self._sessions = config['sessions']
+        except ValueError:
+            raise Exception("Invalid configuration for worker - period / maxcount / sessions not properly formatted")
+        # configuration - action 
+        self._action   = config['action_conditions']
 
 
     def getWorkerTarget(self):
@@ -44,9 +50,44 @@ class AllSafeWorker(threading.Thread):
         workerTarget += " - TARGET: "  + self._url
         workerTarget += " - AGENT: "   + self._agent
 
+    
+    def carryAttach(self):
+        """ 
+        This method can be used to verify if the attack can be carried according the action conditions
+        presetted in the config file
+
+        @return: boolean, if the attack can be carried or not
+        """
+        # retrieving current date and time - it uses UTC based comparison
+        today  = date.today()
+        utcnow = datetime.utcnow()
+
+        # checking for day 
+        if today.month in self._action['avoid_month']:
+            return False
+        if today.weekday() in self._action['avoid_week']:
+            return False
+
+        # check if there is any particolar attack time
+        if self._action != "none":
+            attackTime = map((lambda t: int(t)), self._action['attack_time'].split("-"))
+            if min(attackTime) <= utcnow.hour <= max(attackTime):
+                return True
+            else:
+                return False
+        # or check for AM / PM 
+        else:
+            if self._action['AM'] and self._action['PM']:
+                return True
+            if self._action['AM']:
+                return 0 < utcnow.hour <= 12
+            if self._action['PM']:
+                return 12 < utcnow.hour <= 24
+
+
+
     def run(self):
-        # dummy (for now...)
-        print("I am: " + self._name)
+        
 
 
 class AllSafeWorkerMaster():
