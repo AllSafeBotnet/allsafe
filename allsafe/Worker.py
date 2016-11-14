@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """
 This is the script handling the worker of the botnet seen as a single thread. 
 The botnet will be made of multiple agents, independent each other, each one
@@ -7,7 +5,7 @@ using thread-based parallelism according to the features of their own running ma
 to handle multiple connection to the specified url.
 
 Created:    24 October 2016
-Modified:   12 November 2016
+Modified:   13 November 2016
 """
 
 import threading
@@ -25,7 +23,7 @@ class AllSafeWorker(threading.Thread):
         @param: config, dictionary - the configuration parameter for this thread
         """
         # calling superclass init method
-        threading.Thread.__init__(self)
+        threading.Thread._init__(self)
         # setting up threading attributes
         self._wid     = wid
         self._name    = name
