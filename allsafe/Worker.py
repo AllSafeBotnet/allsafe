@@ -5,7 +5,7 @@ using thread-based parallelism according to the features of their own running ma
 to handle multiple connection to the specified url.
 
 Created:    24 October 2016
-Modified:   13 November 2016
+Modified:   14 November 2016
 """
 
 from threading import Thread
