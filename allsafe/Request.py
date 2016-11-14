@@ -29,17 +29,17 @@ class Request():
         config_json = json.loads(config)
 
         # parameters initialization         
-        self.__method = config_json['method']
-        self.__url = config_json['url']
-        self.__header = {
+        self._method = config_json['method']
+        self._url = config_json['url']
+        self._header = {
             "user-agent" : config_json['user-agent']
         } 
-        self.__credentials = config_json['auth-credentials']
-        self.__encoding = config_json['encoding']
-        self.__payload = config_json['payload']
-        self.__timeout = config_json['timeout']
-        self.__response = config_json['response']
-        self.__responseheader = config_json['response-header']
+        self._credentials = config_json['auth-credentials']
+        self._encoding = config_json['encoding']
+        self._payload = config_json['payload']
+        self._timeout = config_json['timeout']
+        self._response = config_json['response']
+        self._responseheader = config_json['response-header']
 
 
 
@@ -53,28 +53,28 @@ class Request():
         req = requests.Request()
 
         # parameters setting
-        req.method = self.__method
-        req.url = self.__url
-        req.data = self.__payload
-        req.params = self.__payload
-        req.headers = self.__header
+        req.method = self._method
+        req.url = self._url
+        req.data = self._payload
+        req.params = self._payload
+        req.headers = self._header
 
         # a new session is created
         s = requests.Session()
         # Credential for authentication need to be in the right format 
-        if (self.__credentials != "{}"):
-            s.auth = (self.__credentials["username"] , self.__credentials["password"])
+        if (self._credentials != "{}"):
+            s.auth = (self._credentials["username"] , self._credentials["password"])
 
         # request performs
         r = s.send(req.prepare())
 
         # based on the preferences the response will be given
-        if (self.__response == "json"):
+        if (self._response == "json"):
             try:
                 return r.json()
             except ValueError:
                 print("Error in json") #TODO to improve
         
-        if (self.__response == "raw"):
+        if (self._response == "raw"):
             return r.raw()
         return r.text

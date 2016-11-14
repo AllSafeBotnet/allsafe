@@ -33,7 +33,7 @@ class AllSafeWorker(threading.Thread):
         self._agent   = config['agent']
         # configuration - periodicity
         self._period   = int(config['period'])
-        self._maxcount = int(config['maxcount'])        
+        self._maxcount = int(config['maxcount'])
 
 
     def getWorkerTarget(self):
