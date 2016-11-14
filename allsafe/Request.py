@@ -69,7 +69,7 @@ class Request():
             try:
                 return r.json()
             except ValueError:
-                print("Error in json") #TODO to improve
+                raise Exception("Error in JSON encoding / decoding preparing the request")
         
         if (self._response == "raw"):
             return r.raw()
