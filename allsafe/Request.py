@@ -34,7 +34,6 @@ class Request():
         self._header = {
             "user-agent" : config_json['user-agent']
         } 
-        self._credentials = config_json['auth-credentials']
         self._encoding = config_json['encoding']
         self._payload = config_json['payload']
         self._timeout = config_json['timeout']
@@ -61,9 +60,6 @@ class Request():
 
         # a new session is created
         s = requests.Session()
-        # Credential for authentication need to be in the right format 
-        if (self._credentials != "{}"):
-            s.auth = (self._credentials["username"] , self._credentials["password"])
 
         # request performs
         r = s.send(req.prepare())
