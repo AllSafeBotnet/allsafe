@@ -9,7 +9,7 @@ import requests
 import json
 import os
 
-class Request():
+class Request(Thread):
     """
     The Request class will contain all the basic information useful to perform
     the HTTP request
@@ -17,7 +17,10 @@ class Request():
     @param: config_path, filename = path to file containing the configuration
     """
     def __init__(self, config_path):
-
+        
+        # calling superclass init method
+        Thread._init__(self)
+        
         # performing file opening and reading
         script_dir = os.path.dirname(__file__) 
         abs_file_path = os.path.join(script_dir, config_path)
@@ -74,3 +77,7 @@ class Request():
         if (self._response == "raw"):
             return r.raw()
         return r.text
+
+    def run(self) {
+        perform();
+    }
