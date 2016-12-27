@@ -120,11 +120,11 @@ class AllSafeWorker(Thread):
                         error = True
                         continue
                     
-                    # storing the value for logging feature
-                    attackData  = "[" + str(time()) + "] => " + self.getWorkerTarget() 
+                    # storing the value for logging feature in a tuple (timestamp, data)
+                    attackData = self.getWorkerTarget() 
                     if error:
                         attackData += " => ERROR"
-                    self._loglist.append(attackData)
+                    self._loglist.append((time(), attackData))
 
                     # thread safe sleeping for the specified interval
                     threadSleep(self._period)
