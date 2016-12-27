@@ -5,21 +5,22 @@ using thread-based parallelism according to the features of their own running ma
 to handle multiple connection to the specified url.
 
 Created:    24 October 2016
-Modified:   14 November 2016
+Modified:   27 December 2016
 """
 
 from threading import Thread
 from datetime import datetime, date
-from time import sleep as threadSleep
+from time import time, sleep as threadSleep
 
 from allsafe.Request import Request
 
 from allsafe.utils.config import validateConfigFile
-from allsafe.utils.log import log
+from allsafe.utils.log import logLine, logAttack
+
 
 
 class AllSafeWorker(Thread):
-    def __init__(self, wid, name, config):
+    def __init__(self, wid, name, config, loglist):
         """
         This class extends the implementation of threading.Thread to handle a HTTP GET request.
         On init we set the thread identifier and we call the super class method.
@@ -27,6 +28,7 @@ class AllSafeWorker(Thread):
         @param: wid, integer - the worker unique identifier 
         @param: name, alphanumeric string - the thread unique name
         @param: config, dictionary - the configuration parameter for this thread
+        @param: loglist, list - the logging dictionary from master to store calls and results
         """
         # calling superclass init method
         Thread._init__(self)
@@ -46,14 +48,17 @@ class AllSafeWorker(Thread):
         # configuration - action 
         self._action   = config['action_conditions']
 
+        # logging
+        self._loglist  = loglist
+
 
     def getWorkerTarget(self):
         """
         This method prints out a human readable representation of this worker purpose
         """
         workerTarget  = self.getName()
-        workerTarget += " - TARGET: "  + self._url
-        workerTarget += " - AGENT: "   + self._agent
+        workerTarget += " - TARGET: "  + self._request['url']
+        workerTarget += " - AGENT: "   + self._request['user-agent']
 
     
     def carryAttack(self):
@@ -105,11 +110,22 @@ class AllSafeWorker(Thread):
                 for i in range(0, self._maxcount):
                     # instantiate request class 
                     req = Request(self._request)
-                    # running request object 
+                    # running request object
+                    error = False 
                     try:
-                        req.perform()
+                        # req is a thread 
+                        req.start()
                     except ValueError:
+                        # an error occured during request performing!
+                        error = True
                         continue
+                    
+                    # storing the value for logging feature
+                    attackData  = "[" + str(time()) + "] => " + self.getWorkerTarget() 
+                    if error:
+                        attackData += " => ERROR"
+                    self._loglist.append(attackData)
+
                     # thread safe sleeping for the specified interval
                     threadSleep(self._period)
 
@@ -117,11 +133,8 @@ class AllSafeWorker(Thread):
                 self._sessions  -= 1
                 if self._sessions == 0: 
                     break
-                else:
-                    #TODO performing check for config updates
             
             greenlight = self.carryAttack()
-
 
 
 class AllSafeWorkerMaster():
@@ -146,6 +159,8 @@ class AllSafeWorkerMaster():
 
         # initializing workers array
         self._workers = []
+        # initializing workers log dictionary
+        self._workers_log = dict()
         
     
     def initializeWorkers(self):
@@ -155,16 +170,18 @@ class AllSafeWorkerMaster():
         """
         
         # logging the initialization routine - start
-        log(self._log, "------------------- <SETUP> -------------------")
+        logLine(self._log, "------------------- <SETUP> -------------------")
 
         for i in range(0, len(self._configuration["targets"])):
             # iterating over the target list we initialize every worker
+            # and their log section
+            self._workers_log[i] = [] 
             worker = AllSafeWorker(i, "worker-" + str(i), self._configuration["targets"][i])
             # logging worker reference
-            log(self._log, worker.getWorkerTarget())
+            logLine(self._log, worker.getWorkerTarget())
 
         # logging the initialization routine - end
-        log(self._log, "------------------- </SETUP> -------------------")
+        logLine(self._log, "------------------- </SETUP> -------------------")
 
 
     def executeBotnet(self): 
@@ -172,19 +189,23 @@ class AllSafeWorkerMaster():
         This method handle the execution of the entire botnet, starting each worker one after one and
         handling the final join operation.
         """
-        
+
+        logLine(self._log, "------------------- <STARTUP> -------------------")
+
         # iterating over workers to start them up
         for worker in self._workers:
             # logging the startup routine
-            log(self._log, "starting up " + worker.getName() + " ...")
+            logLine(self._log, "starting up " + worker.getName() + " ...")
             worker.start()
+
+        logLine(self._log, "------------------- </STARTUP> -------------------")
 
         # iterating over worker to join them
         for worker_to_join in self._workers:
             worker_to_join.join()
         
-        log(self._log, "... finally exiting bot master!")
-
+        # logging the attack
+        logAttack(self._workers_log)
 
 if __name__ == "__main__":
     # dummy
