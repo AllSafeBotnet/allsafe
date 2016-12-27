@@ -15,7 +15,7 @@ from time import time, sleep as threadSleep
 from allsafe.Request import Request
 
 from allsafe.utils.config import validateConfigFile
-from allsafe.utils.log import logLine, logAttack
+from allsafe.utils.log import logInfo, logAttack
 
 
 
@@ -170,7 +170,7 @@ class AllSafeWorkerMaster():
         """
         
         # logging the initialization routine - start
-        logLine(self._log, "------------------- <SETUP> -------------------")
+        logInfo(self._log, "------------------- <SETUP> -------------------")
 
         for i in range(0, len(self._configuration["targets"])):
             # iterating over the target list we initialize every worker
@@ -178,10 +178,10 @@ class AllSafeWorkerMaster():
             self._workers_log[i] = [] 
             worker = AllSafeWorker(i, "worker-" + str(i), self._configuration["targets"][i])
             # logging worker reference
-            logLine(self._log, worker.getWorkerTarget())
+            logInfo(self._log, worker.getWorkerTarget())
 
         # logging the initialization routine - end
-        logLine(self._log, "------------------- </SETUP> -------------------")
+        logInfo(self._log, "------------------- </SETUP> -------------------")
 
 
     def executeBotnet(self): 
@@ -190,15 +190,15 @@ class AllSafeWorkerMaster():
         handling the final join operation.
         """
 
-        logLine(self._log, "------------------- <STARTUP> -------------------")
+        logInfo(self._log, "------------------- <STARTUP> -------------------")
 
         # iterating over workers to start them up
         for worker in self._workers:
             # logging the startup routine
-            logLine(self._log, "starting up " + worker.getName() + " ...")
+            logInfo(self._log, "starting up " + worker.getName() + " ...")
             worker.start()
 
-        logLine(self._log, "------------------- </STARTUP> -------------------")
+        logInfo(self._log, "------------------- </STARTUP> -------------------")
 
         # iterating over worker to join them
         for worker_to_join in self._workers:
