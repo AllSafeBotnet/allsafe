@@ -8,7 +8,7 @@ and robustness to the botnet core.
 Created:    27 December 2016
 Modified:   27 December 2016
 """
-from time import time 
+from datetime import datetime 
 
 
 def logInfo(log_file, message, attack=False):
@@ -24,7 +24,7 @@ def logInfo(log_file, message, attack=False):
     logFile = open(log_file, 'a')
     # formatting message
     if not attack:
-        entry = "[" + time() + "] " + message
+        entry = "[" + str(datetime.utcnow()) + "] " + message
         # writing log message - info level
         logFile.write(entry)
     else:
@@ -45,7 +45,7 @@ def logAttack(log_file, attack_dict):
     @param: attack, boolean  - (optional) override message formatting printing attack logs
     """
     
-    attackStory  = "------------------- <ATTACK> --------------------\n")
+    attackStory  = "------------------- < ATTACK {0} > --------------------\n".format(str(datetime.utcnow()))
 
     # joining the entire attack history from the various workers log entries
     entries = []
@@ -57,9 +57,9 @@ def logAttack(log_file, attack_dict):
     
     # iterating over the story to build the complete attackStory
     for entry in entries:
-        attackStory += "[" str(entry[0]) + "] => " + entry[1] + "\n"
+        attackStory += "[" str(round(entry[0])) + "] => " + entry[1] + "\n"
 
-    attackStory += "------------------- </ATTACK> -------------------\n")
+    attackStory += "------------------- </ATTACK {0} > -------------------\n").format(str(datetime.utcnow()))
     attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n")
     attackStory += "/\\\\\\\\\\\\\\\\\ ending attack \\\\\\\\\\\\\\\/\n")
     attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n")
