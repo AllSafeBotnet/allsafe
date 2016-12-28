@@ -4,7 +4,7 @@ from flask import request
 
 app = Flask(__name__)
  
-'''
+"""
 This is a simple implementation of a micro WebServer using Flask
 
 This server will receive HTTP request in both GET and POST method on the root page.
@@ -13,7 +13,8 @@ If the method is POST, a login request is assumed and the login process will be 
 if the process fails an error message will be returned; if it will succed the amdin page will be returned.
 
 If the method is GET, the login form will be shown.
-'''
+"""
+
 @app.route("/",  methods=['GET', 'POST'])
 def loginPage():
     if request.method == 'POST':
