@@ -6,7 +6,7 @@ it is simply performed at the end of the attack, to ensure performances
 and robustness to the botnet core.
 
 Created:    27 December 2016
-Modified:   27 December 2016
+Modified:   28 December 2016
 """
 from datetime import datetime 
 
