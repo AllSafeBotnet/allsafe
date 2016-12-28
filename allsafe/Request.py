@@ -6,33 +6,21 @@ Created:     13 November 2016
 Modified:    27 December 2016
 """
 import requests
-import json
-import os
 
 class Request(Thread):
     """
     The Request class will contain all the basic information useful to perform
     the HTTP request
 
-    @param: config_path, filename = path to file containing the configuration
+    @param: config_dict, dictionary - dictionary with the correct configuration for request
     """
-    def __init__(self, config_path):
+    def __init__(self, config_json):
         
         # calling superclass init method
         Thread._init__(self)
-        
-        # performing file opening and reading
-        script_dir = os.path.dirname(__file__) 
-        abs_file_path = os.path.join(script_dir, config_path)
-        file = open(abs_file_path,'r')
-        config = file.read()
-        file.close()
-        
-        # the read json will be loaded in order to be accessed in an easy way
-        config_json = json.loads(config)
 
         # parameters initialization         
-        self._method = config_json['method']
+        self._method = config_dict['method']
         self._url = config_json['url']
         self._header = {
             "user-agent" : config_json['user-agent']
