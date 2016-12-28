@@ -3,7 +3,7 @@ This is the script that will handle the request to the endpoint
 and that will use the JSON configuration file given.
 
 Created:     13 November 2016 
-Modified:    27 December 2016
+Modified:    28 December 2016
 """
 import requests
 
