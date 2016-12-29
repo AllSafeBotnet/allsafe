@@ -150,7 +150,7 @@ class AllSafeWorkerMaster():
         # parsing the configuration file to return a configuration dictionary
         self._configuration = validateConfigFile(config_file, override)
         if self._configuration == None:
-            raise Exception("Configuration file is not properly formatted!")
+            raise Exception("Configuration file is not properly formatted, or missing schema in /utils directory!")
 
         # configuring the master
         self._log      = self._configuration["log_file"]
