@@ -93,7 +93,11 @@ def validateConfigFile(config_file, override):
                 if (target[setting] <= 0) or (setting not in target):
                     target[setting] = targetSchema[setting]
             # check for action conditions
-            target['action_conditions'] = validateActionConditions(target, targetSchema['action_conditions'])
+            ac = 'action_conditions'
+            if ac not in target:
+                target[ac] = targetSchema[ac]
+            else:
+                target[ac] = validateActionConditions(target[ac], targetSchema[ac])
 
             # 2.1. compare request schema
             if 'request_params' not in target:
@@ -161,22 +165,54 @@ def updateConfigFile(config_file, configuration):
         return False
 
 
-def validateActionConditions(target, schema):
+def validateActionConditions(action, schema):
     """
     This utility is used to validate the action conditions or to 
     bring them to default values (attack will be always carried)
 
-    @param target, dictionary - target dictionary
+    @param action, dictionary - target action conditions dictionary
     @param schema, dictionary - default action conditions
     @return action_conditions, dictionary
     """
     # first of all we check if action conditions are set
     if 'action_conditions' not in target:
         return schema
-    # check for AM / PM
-    # to be continued ...
-        
-    return None
+
+    # check for AM / PM - we assume if the param is not present the attack can be carried
+    for setting in ['AM', 'PM']:
+        if (setting not in action) or (int(action[setting]) < 0) or (int(action[setting]) > 1):
+            action[setting] = schema[setting]
+        else:
+            action[setting] = int(action[setting])
+
+    # check for attack time
+    at = 'attack_time'
+    if at not in action:
+        action[at] = schema[at]
+    else:
+        attackTime = map((lambda t: int(t) % 24), action[at].split("-"))
+        action[at] = str(min(attackTime)) + "-" + str(max(attackTime))
+    
+    # check for avoid week
+    aw = 'avoid_week'
+    if aw not in action:
+        action[aw] = schema[aw]
+    else:
+        for i in range(0, len(action[aw])):
+            action[aw][i] = int(action[aw][i]) % (7 + 1)
+
+    # check for avoid month
+    am = 'avoid_month'
+    if am not in action:
+        action[am] = schema[am]
+    else:
+        for i in range(0, len(action[am])):
+            action[am][i] = int(action[am][i]) % (31 + 1)
+    
+    # finally we return action conditions
+    return action
+
+    
 
 def validateRequestParams(request, schema):
     """
