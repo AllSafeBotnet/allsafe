@@ -79,7 +79,7 @@ class AllSafeWorker(Thread):
             return False
 
         # check if there is any particolar attack time
-        if self._action != "none":
+        if self._action != None:
             attackTime = map((lambda t: int(t)), self._action['attack_time'].split("-"))
             if min(attackTime) <= utcnow.hour <= max(attackTime):
                 return True
