@@ -32,8 +32,7 @@
                     "key1": "value1", 
                     "key2": "value2" 
                 },
-                "timeout": "0.01", 
-                "response": "none", 
+                "response": "raw", 
                 "response-header": 0
             },
 

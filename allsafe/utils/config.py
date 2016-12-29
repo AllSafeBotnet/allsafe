@@ -42,13 +42,12 @@ def validateConfigFile(config_file):
     }
     # presetting the request_params schema for the configuration dictionary
     requestSchema = {
-        "method"     : "",
+        "method"     : "GET",
         "url"        : "",
         "user-agent" : "",
-        "encoding"   : "",
-        "payload"    : "",
-        "timeout"    : "",
-        "response"   : "",
+        "encoding"   : "UTF-8",
+        "payload"    : {},
+        "response"   : "raw",
         "response-header" : 0
     }
 
