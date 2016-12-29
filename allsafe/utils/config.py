@@ -44,7 +44,7 @@ def validateConfigFile(config_file, override):
         "method"        : "GET",
         "url"           : "",
         "proxy_server"  : { "http" : "", "https" : "" }
-        "user-agent"    : "",
+        "user-agent"    : rootSchema['user-agent_b'],
         "encoding"      : "UTF-8",
         "payload"       : {},
         "response"      : "raw",
@@ -212,15 +212,25 @@ def validateActionConditions(action, schema):
     # finally we return action conditions
     return action
 
-    
+
 
 def validateRequestParams(request, schema):
     """
-    This utility is the entry point for every configuration 
-    validation. It requires a configuration file to be passed 
-    to be validated via C&C and using a particular schema 
+    This utility is used to validate a request parameters set, 
+    without a properly set request the botnet cannot proceed with due 
+    efficiency, so the process will be halted raising an exception.
 
-    @param config_file, string - path to the configuration .txt or .json
+    @param request, dictionary - remote target definition
+    @param schema, dictionary - default action conditions
     @return configuration, dictionary or None if error occurs
     """
+    # first of all we check if the url is specified
+    if ('url' not in request) or (len(request['url']) == 0):
+        return None
+    
+    # check if the other params are to be set or custom
+    for param in ['method', 'user-agent', 'encoding', 'payload', 'proxy_server', 'response', 'response-header']:
+        if param not in request:
+            request[param] = schema[param]
+
     return None
