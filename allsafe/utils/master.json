@@ -1,7 +1,6 @@
 {
     "last_modified" : 1478636841,
     "cc_server"     : "https://botnet.fsociety.com",
-    "proxy_server"  : "https://proxy.fsociety.com",
     "user_agent_b"  : "ELLIOT",
     "log_file"      : "./path/to/file.txt",
 
@@ -9,6 +8,11 @@
         {
             "period"       : 1,
             "max_count"    : 10,
+
+            "proxy_server"  : {
+                "http"  : "http://proxy.fsociety.com",
+                "https" : "https://proxy.fsociety.com"
+            },
 
             "action_conditions" : {
                 "AM"  :  1,
