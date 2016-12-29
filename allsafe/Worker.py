@@ -75,7 +75,7 @@ class AllSafeWorker(Thread):
         # checking for day 
         if today.month in self._action['avoid_month']:
             return False
-        if today.weekday() in self._action['avoid_week']:
+        if (today.weekday()+1) in self._action['avoid_week']:
             return False
 
         # check if there is any particolar attack time
