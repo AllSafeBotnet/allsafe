@@ -31,7 +31,7 @@ class AllSafeWorker(Thread):
         @param: loglist, list - the logging dictionary from master to store calls and results
         """
         # calling superclass init method
-        Thread._init__(self)
+        Thread.__init__(self)
         # setting up threading attribute
         self._wid     = wid
         self._name    = name
@@ -41,7 +41,7 @@ class AllSafeWorker(Thread):
         # configuration - periodicity and sessions
         try:
             self._period   = int(config['period'])
-            self._maxcount = int(config['maxcount'])
+            self._maxcount = int(config['max_count'])
             self._sessions = config['sessions']
         except ValueError:
             raise Exception("WORKER"+str(wid)+"- Invalid configuration for worker - period / maxcount / sessions not properly formatted")
@@ -59,7 +59,7 @@ class AllSafeWorker(Thread):
         workerTarget  = self.getName()
         workerTarget += " - TARGET: "  + self._request['url']
         workerTarget += " - AGENT: "   + self._request['user-agent']
-
+        return workerTarget
     
     def carryAttack(self):
         """ 
@@ -175,7 +175,7 @@ class AllSafeWorkerMaster():
             # iterating over the target list we initialize every worker
             # and their log section 
             self._workers_log[i] = []
-            worker = AllSafeWorker(i, "worker-" + str(i), self._targets[i])
+            worker = AllSafeWorker(i, "worker-" + str(i), self._targets[i], self._workers_log[i])
             # logging worker reference
             logInfo(self._log, worker.getWorkerTarget())
 
@@ -204,10 +204,10 @@ class AllSafeWorkerMaster():
             worker_to_join.join()
         
         # logging the attack
-        logAttack(self._workers_log)
+        logAttack(self._log, self._workers_log)
 
 if __name__ == "__main__":
     master = AllSafeWorkerMaster('./utils/config_schema_example.json')
     master.initializeWorkers()
-    master.executeBotnet
+    master.executeBotnet()
     

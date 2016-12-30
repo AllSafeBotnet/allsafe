@@ -24,7 +24,7 @@ def logInfo(log_file, message, attack=False):
     logFile = open(log_file, 'a')
     # formatting message
     if not attack:
-        entry = "[" + str(datetime.utcnow()) + "] " + message
+        entry = "[ {0} ] ".format(str(datetime.utcnow())) + message + "\n"
         # writing log message - info level
         logFile.write(entry)
     else:
@@ -65,6 +65,6 @@ def logAttack(log_file, attack_dict):
     attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n"
 
     #when attack story is complete, we write it into the log file
-    logInfo(log_file, attackStory)
+    logInfo(log_file, attackStory, attack=True)
 
     return
