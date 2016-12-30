@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import abort
 
 app = Flask(__name__)
  
@@ -29,9 +30,15 @@ def show_login_form():
 
 def login(username, password):
     print("Hello " + username)
-    validate(username, password)                #TODO
-    return render_template("adminpanel.html")   #TODO
+    if (validate(username, password)):
+        return render_template("controlpage.html")
+    else:
+        return abort(401)
 
+def validate(username,password):
+    if (username == "federico" and password == "alessio"):
+        #TODO Can we do it in a more effective way?
+        return True;
 
 
 if __name__ == "__main__":

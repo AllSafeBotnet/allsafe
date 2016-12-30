@@ -9,7 +9,7 @@ Modified:    30 December 2016
 from threading import Thread
 import requests
 
-class Request(Thread):
+class Request():
     """
     The Request class will contain all the basic information useful to perform
     the HTTP request
@@ -19,7 +19,6 @@ class Request(Thread):
     def __init__(self, config_dict):
         
         # calling superclass init method
-        Thread.__init__(self)
 
         # parameters initialization         
         self._method = config_dict['method']
@@ -66,9 +65,3 @@ class Request(Thread):
         if (self._response == "raw"):
             return r.raw
         return r.text
-
-    def run(self):
-        """
-        This method will perform the actual request, launching thread active behaviour
-        """
-        self.perform()
