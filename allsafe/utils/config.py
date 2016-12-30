@@ -180,11 +180,10 @@ def validateActionConditions(action, schema):
             action[setting] = schema[setting]
         else:
             action[setting] = int(action[setting])
-    # check for attack time
+    # check for attack time to be polished 
+    # note that it is not necessary to be set to carry the attack!
     at = 'attack_time'
-    if at not in action:
-        action[at] = schema[at]
-    else:
+    if at in action:
         attackTime = map((lambda t: int(t) % 24), action[at].split("-"))
         attackTime = list(attackTime)
         action[at] = str(min(attackTime)) + "-" + str(max(attackTime))

@@ -78,10 +78,12 @@ class AllSafeWorker(Thread):
         if (today.weekday()+1) in self._action['avoid_week']:
             return False
 
-        # check if there is any particolar attack time
-        attackTime = map((lambda t: int(t)), self._action['attack_time'].split("-"))
-        attackTime = list(attackTime)
-        return min(attackTime) <= utcnow.hour <= max(attackTime)
+        # check if there is any particolar attack time (we assume that is can
+        # override any specified AM / PM condition)
+        if 'attack_time' in self._action:
+            attackTime = map((lambda t: int(t)), self._action['attack_time'].split("-"))
+            attackTime = list(attackTime)
+            return min(attackTime) <= utcnow.hour <= max(attackTime)
             
         # or check for AM / PM 
         if self._action['AM'] and self._action['PM']:
