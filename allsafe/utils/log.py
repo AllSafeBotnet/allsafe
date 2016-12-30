@@ -60,6 +60,7 @@ def logAttack(log_file, attack_dict):
         attackStory += "[" + str(round(entry[0])) + "] => " + entry[1] + "\n"
 
     attackStory += "[ {0} ] ------------------- </ATTACK > -------------------\n".format(str(datetime.utcnow()))
+    attackStory += "\n\n\n\n"
 
     #when attack story is complete, we write it into the log file
     logInfo(log_file, attackStory, attack=True)
