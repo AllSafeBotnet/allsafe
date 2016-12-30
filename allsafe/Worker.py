@@ -7,8 +7,10 @@ to handle multiple connection to the specified url.
 Created:    24 October 2016
 Modified:   30 December 2016
 """
+import os # debug os.getpid()
 
 from threading import Thread
+from multiprocessing.context import Process
 from datetime import datetime, date
 from time import time, sleep as threadSleep
 
@@ -205,8 +207,38 @@ class AllSafeWorkerMaster():
         # logging the attack
         logAttack(self._log, self._workers_log)
 
+
+
+class AllSafeBotnet():
+    def __init__():
+        """
+        This class represents the core functionalities for the AllSafeBotnet,
+        it can be initialized and awaits to be called in order to transfer
+        to another process an attack to be carried.
+        """
+        self._attack_counter = 0
+
+    def attack(self, configuration):
+        """
+        Method to start a new attack session.
+        @param: configuration, string - path to the configuration file
+        """
+        self._attack_counter = 0 
+        botnet = self.Botnet(configuration)
+        botnet.start()
+
+    class Botnet(Process):
+        def __init__(self, config, name='AllSafeBotnet'):
+            super().__init__(name=name)
+            self._config = config
+
+        def run(self):
+            # simply creating a master and starting the attack
+            master = AllSafeWorkerMaster(self._config)
+            master.initializeWorkers()
+            master.executeBotnet()
+
 if __name__ == "__main__":
-    master = AllSafeWorkerMaster('./utils/config_schema_example.json')
-    master.initializeWorkers()
-    master.executeBotnet()
-    
+    allsafe = AllSafeBotnet()
+    # attack
+    allsafe.attack('./utils/config_schema_example.json')
