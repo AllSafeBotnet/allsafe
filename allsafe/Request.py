@@ -64,7 +64,7 @@ class Request(Thread):
                 raise Exception("Error in JSON encoding / decoding preparing the request")
         
         if (self._response == "raw"):
-            return r.raw()
+            return r.raw
         return r.text
 
     def run(self):
