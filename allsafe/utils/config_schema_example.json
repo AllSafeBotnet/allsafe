@@ -1,8 +1,8 @@
 {
     "last_modified" : 1478636841,
-    "cc_server"     : "https://botnet.fsociety.com",
+    "cc_server"     : "",
     "user-agent_b"  : "ELLIOT",
-    "log_file"      : "./path/to/file.txt",
+    "log_file"      : "./log.txt",
 
     "targets" : [
         {

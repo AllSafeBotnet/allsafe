@@ -35,7 +35,7 @@ def validateConfigFile(config_file, override):
     targetSchema = {
         "period"            : 1,
         "max_count"         : 1,
-        "action_conditions" : { "AM" : 1, "PM" : 1, "attack_time" : "0-24", "avoid_week" : [], "avoid_month" : [] }
+        "action_conditions" : { "AM" : 1, "PM" : 1, "attack_time" : "0-24", "avoid_week" : [], "avoid_month" : [] },
         "request_params"    : {},
         "sessions"          : 1
     }
@@ -43,7 +43,7 @@ def validateConfigFile(config_file, override):
     requestSchema = {
         "method"        : "GET",
         "url"           : "",
-        "proxy_server"  : { "http" : "", "https" : "" }
+        "proxy_server"  : { "http" : "", "https" : "" },
         "user-agent"    : rootSchema['user-agent_b'],
         "encoding"      : "UTF-8",
         "payload"       : {},
@@ -65,7 +65,7 @@ def validateConfigFile(config_file, override):
     if configuration.keys() != rootSchema.keys():
         return None
     # set to default
-    for setting in ['user_agent_b', 'log_file', 'targets']:
+    for setting in ['user-agent_b', 'log_file', 'targets']:
         if len(configuration[setting]) == 0:
             configuration[setting] = rootSchema[setting]
 
@@ -86,7 +86,7 @@ def validateConfigFile(config_file, override):
         for i in range(0, len(targetList)):
             target = targetList[i]
             # check for schema - only few params are necessary!
-            if not set(target.keys()).issubset(set(targetSchema.keys()))
+            if not set(target.keys()).issubset(set(targetSchema.keys())):
                 return None
             # check for custom values to be polished or set to default
             for setting in ['period', 'max_count', 'sessions']:
@@ -97,7 +97,7 @@ def validateConfigFile(config_file, override):
             if ac not in target:
                 target[ac] = targetSchema[ac]
             else:
-                target[ac] = validateActionConditions(target[ac], targetSchema[ac])
+                target[ac] = validateActionConditions(target[ac], targetSchema[ac])
 
             # 2.1. compare request schema
             if 'request_params' not in target:
@@ -175,7 +175,7 @@ def validateActionConditions(action, schema):
     @return action_conditions, dictionary
     """
     # first of all we check if action conditions are set
-    if 'action_conditions' not in target:
+    if 'action_conditions' not in action:
         return schema
 
     # check for AM / PM - we assume if the param is not present the attack can be carried

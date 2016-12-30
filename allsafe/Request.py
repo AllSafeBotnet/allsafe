@@ -3,8 +3,10 @@ This is the script that will handle the request to the endpoint
 and that will use the JSON configuration file given.
 
 Created:     13 November 2016 
-Modified:    28 December 2016
+Modified:    30 December 2016
 """
+
+from threading import Thread
 import requests
 
 class Request(Thread):
@@ -66,7 +68,7 @@ class Request(Thread):
             return r.raw()
         return r.text
 
-    def run(self)
+    def run(self):
         """
         This method will perform the actual request, launching thread active behaviour
         """

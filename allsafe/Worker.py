@@ -5,17 +5,17 @@ using thread-based parallelism according to the features of their own running ma
 to handle multiple connection to the specified url.
 
 Created:    24 October 2016
-Modified:   27 December 2016
+Modified:   30 December 2016
 """
 
 from threading import Thread
 from datetime import datetime, date
 from time import time, sleep as threadSleep
 
-from allsafe.Request import Request
+from Request import Request
 
-from allsafe.utils.config import validateConfigFile
-from allsafe.utils.log import logInfo, logAttack
+from utils.config import validateConfigFile
+from utils.log import logInfo, logAttack
 
 
 
@@ -160,7 +160,7 @@ class AllSafeWorkerMaster():
         self._workers = []
         # initializing workers log dictionary
         self._workers_log = dict()
-        
+
     
     def initializeWorkers(self):
         """
@@ -173,8 +173,8 @@ class AllSafeWorkerMaster():
 
         for i in range(0, len(self._targets)):
             # iterating over the target list we initialize every worker
-            # and their log section
-            self._workers_log[i] = [] 
+            # and their log section 
+            self._workers_log[i] = []
             worker = AllSafeWorker(i, "worker-" + str(i), self._targets[i])
             # logging worker reference
             logInfo(self._log, worker.getWorkerTarget())
@@ -207,5 +207,7 @@ class AllSafeWorkerMaster():
         logAttack(self._workers_log)
 
 if __name__ == "__main__":
-    # dummy
+    master = AllSafeWorkerMaster('./utils/config_schema_example.json')
+    master.initializeWorkers()
+    master.executeBotnet
     

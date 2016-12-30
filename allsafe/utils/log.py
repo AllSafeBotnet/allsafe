@@ -57,12 +57,12 @@ def logAttack(log_file, attack_dict):
     
     # iterating over the story to build the complete attackStory
     for entry in entries:
-        attackStory += "[" str(round(entry[0])) + "] => " + entry[1] + "\n"
+        attackStory += "[" + str(round(entry[0])) + "] => " + entry[1] + "\n"
 
-    attackStory += "------------------- </ATTACK {0} > -------------------\n").format(str(datetime.utcnow()))
-    attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n")
-    attackStory += "/\\\\\\\\\\\\\\\\\ ending attack \\\\\\\\\\\\\\\/\n")
-    attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n")
+    attackStory += "------------------- </ATTACK {0} > -------------------\n".format(str(datetime.utcnow()))
+    attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n"
+    attackStory += "/\\\\\\\\\\\\\\\\\ ending attack \\\\\\\\\\\\\\\/\n"
+    attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n"
 
     #when attack story is complete, we write it into the log file
     logInfo(log_file, attackStory)
