@@ -6,7 +6,6 @@ Created:     13 November 2016
 Modified:    30 December 2016
 """
 
-from threading import Thread
 import requests
 
 class Request():
