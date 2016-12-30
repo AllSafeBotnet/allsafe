@@ -16,22 +16,22 @@ class Request(Thread):
 
     @param: config_dict, dictionary - dictionary with the correct configuration for request
     """
-    def __init__(self, config_json):
+    def __init__(self, config_dict):
         
         # calling superclass init method
-        Thread._init__(self)
+        Thread.__init__(self)
 
         # parameters initialization         
         self._method = config_dict['method']
-        self._url = config_json['url']
+        self._url = config_dict['url']
         self._header = {
-            "user-agent" : config_json['user-agent']
+            "user-agent" : config_dict['user-agent']
         } 
-        self._encoding = config_json['encoding']
-        self._payload = config_json['payload']
-        self._timeout = config_json['timeout']
-        self._response = config_json['response']
-        self._responseheader = config_json['response-header']
+        self._encoding = config_dict['encoding']
+        self._payload = config_dict['payload']
+        self._timeout = config_dict['timeout']
+        self._response = config_dict['response']
+        self._responseheader = config_dict['response-header']
 
 
 
