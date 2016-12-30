@@ -13,8 +13,8 @@
                 "AM"  :  1,
                 "PM"  :  1,
                 "attack_time": "0-24",
-                "avoid_week"  : [0, 2, 5],
-                "avoid_month" : [1, 3, 25]
+                "avoid_week"  : [],
+                "avoid_month" : []
             },
 
             "request_params" : {
