@@ -29,7 +29,6 @@ class Request(Thread):
         } 
         self._encoding = config_dict['encoding']
         self._payload = config_dict['payload']
-        self._timeout = config_dict['timeout']
         self._response = config_dict['response']
         self._responseheader = config_dict['response-header']
 
