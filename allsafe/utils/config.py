@@ -5,7 +5,7 @@ It will provide access to the Command-and-Control server as well as
 the validation for the configuration dictionary.
 
 Created:    29 December 2016
-Modified:   29 December 2016
+Modified:   30 December 2016
 """
 
 import json
@@ -232,5 +232,3 @@ def validateRequestParams(request, schema):
     for param in ['method', 'user-agent', 'encoding', 'payload', 'proxy_server', 'response', 'response-header']:
         if param not in request:
             request[param] = schema[param]
-
-    return None
