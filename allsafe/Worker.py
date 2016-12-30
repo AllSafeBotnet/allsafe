@@ -71,7 +71,6 @@ class AllSafeWorker(Thread):
         # retrieving current date and time - it uses UTC based comparison
         today  = date.today()
         utcnow = datetime.utcnow()
-
         # checking for day 
         if today.month in self._action['avoid_month']:
             return False
@@ -108,6 +107,8 @@ class AllSafeWorker(Thread):
             greenlight = self.carryAttack()
 
             if greenlight:
+                # debug purposes... #TODO to be removed
+                print("Worker", self.getName(), "greenlight: " + str(greenlight))
                 # performing the attack
                 for i in range(0, self._maxcount):
                     # instantiate request class 
@@ -115,9 +116,8 @@ class AllSafeWorker(Thread):
                     # running request object
                     error = False 
                     try:
-                        # req is a thread 
                         req.start()
-                    except ValueError:
+                    except Exception:
                         # an error occured during request performing!
                         error = True
                         continue
