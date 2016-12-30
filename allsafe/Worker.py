@@ -102,7 +102,6 @@ class AllSafeWorker(Thread):
         
         # the botnet awaits until it can carry the attack at least once (aggressive behaviour)
         while True:
-
             # check if the attack can be carried on
             greenlight = self.carryAttack()
 
@@ -175,7 +174,7 @@ class AllSafeWorkerMaster():
             # and their log section 
             for s in range(0, self._targets[i]['sessions']):
                 self._workers_log[i + s] = []
-                worker = AllSafeWorker(i, "worker-" + str(i) + "/" + str(s), self._targets[i], self._workers_log[i])
+                worker = AllSafeWorker(i, "worker-t" + str(i) + "-s" + str(s), self._targets[i], self._workers_log[i])
                 # logging worker reference
                 logInfo(self._log, worker.getWorkerTarget())
                 self._workers.append(worker)
