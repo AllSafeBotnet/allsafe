@@ -227,8 +227,11 @@ def validateRequestParams(request, schema):
     # first of all we check if the url is specified
     if ('url' not in request) or (len(request['url']) == 0):
         return None
-    
+
     # check if the other params are to be set or custom
     for param in ['method', 'user-agent', 'encoding', 'payload', 'proxy_server', 'response', 'response-header']:
         if param not in request:
             request[param] = schema[param]
+    
+    # finally we return request parameters
+    return request
