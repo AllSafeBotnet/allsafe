@@ -103,6 +103,7 @@ class AllSafeWorker(Thread):
         """
         # check if the attack can be carried on
         greenlight = self.carryAttack()
+        print("I AM WORKER: ", self.getWorkerTarget, "greenlight: " + greenlight)
 
         while self._sessions > 0:
             if greenlight:
@@ -178,6 +179,7 @@ class AllSafeWorkerMaster():
             worker = AllSafeWorker(i, "worker-" + str(i), self._targets[i], self._workers_log[i])
             # logging worker reference
             logInfo(self._log, worker.getWorkerTarget())
+            self._workers.append(worker)
 
         # logging the initialization routine - end
         logInfo(self._log, "------------------- </SETUP> -------------------")

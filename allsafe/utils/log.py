@@ -45,7 +45,7 @@ def logAttack(log_file, attack_dict):
     @param: attack, boolean  - (optional) override message formatting printing attack logs
     """
     
-    attackStory  = "------------------- < ATTACK {0} > --------------------\n".format(str(datetime.utcnow()))
+    attackStory = "[ {0} ] ------------------- <ATTACK > -------------------\n".format(str(datetime.utcnow()))
 
     # joining the entire attack history from the various workers log entries
     entries = []
@@ -59,10 +59,7 @@ def logAttack(log_file, attack_dict):
     for entry in entries:
         attackStory += "[" + str(round(entry[0])) + "] => " + entry[1] + "\n"
 
-    attackStory += "------------------- </ATTACK {0} > -------------------\n".format(str(datetime.utcnow()))
-    attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n"
-    attackStory += "/\\\\\\\\\\\\\\\\\ ending attack \\\\\\\\\\\\\\\/\n"
-    attackStory += "/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\n"
+    attackStory += "[ {0} ] ------------------- </ATTACK > -------------------\n".format(str(datetime.utcnow()))
 
     #when attack story is complete, we write it into the log file
     logInfo(log_file, attackStory, attack=True)
