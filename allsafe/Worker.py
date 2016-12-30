@@ -115,7 +115,7 @@ class AllSafeWorker(Thread):
                     # running request object
                     error = False 
                     try:
-                        req.start()
+                        req.perform()
                     except Exception:
                         # an error occured during request performing!
                         error = True
