@@ -191,6 +191,7 @@ def validateActionConditions(action, schema):
         action[at] = schema[at]
     else:
         attackTime = map((lambda t: int(t) % 24), action[at].split("-"))
+        attackTime = list(attackTime)
         action[at] = str(min(attackTime)) + "-" + str(max(attackTime))
     
     # check for avoid week
