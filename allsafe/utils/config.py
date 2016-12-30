@@ -184,7 +184,7 @@ def validateActionConditions(action, schema):
     # note that it is not necessary to be set to carry the attack!
     at = 'attack_time'
     if at in action:
-        attackTime = map((lambda t: int(t) % 24), action[at].split("-"))
+        attackTime = map((lambda t: int(t) % (24 + 1)), action[at].split("-"))
         attackTime = list(attackTime)
         action[at] = str(min(attackTime)) + "-" + str(max(attackTime))
     
