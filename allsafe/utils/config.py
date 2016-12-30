@@ -174,17 +174,12 @@ def validateActionConditions(action, schema):
     @param schema, dictionary - default action conditions
     @return action_conditions, dictionary
     """
-    # first of all we check if action conditions are set
-    if 'action_conditions' not in action:
-        return schema
-
     # check for AM / PM - we assume if the param is not present the attack can be carried
     for setting in ['AM', 'PM']:
         if (setting not in action) or (int(action[setting]) < 0) or (int(action[setting]) > 1):
             action[setting] = schema[setting]
         else:
             action[setting] = int(action[setting])
-
     # check for attack time
     at = 'attack_time'
     if at not in action:
