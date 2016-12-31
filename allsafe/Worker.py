@@ -7,10 +7,12 @@ to handle multiple connection to the specified url.
 Created:    24 October 2016
 Modified:   30 December 2016
 """
-import os # debug os.getpid()
+
+from random import randint
 
 from threading import Thread
 from multiprocessing import Process
+
 from datetime import datetime, date
 from time import time, sleep as threadSleep
 
@@ -44,7 +46,6 @@ class AllSafeWorker(Thread):
         try:
             self._period   = int(config['period'])
             self._maxcount = int(config['max_count'])
-            self._sessions = config['sessions']
         except ValueError:
             raise Exception("WORKER"+str(wid)+"- Invalid configuration for worker - period / maxcount / sessions not properly formatted")
         # configuration - action 
@@ -130,7 +131,10 @@ class AllSafeWorker(Thread):
                     self._loglist.append((time(), attackData))
 
                     # thread safe sleeping for the specified interval
-                    threadSleep(self._period)
+                    if len(self._period) == 1:
+                        threadSleep(self._period[0])
+                    else:
+                        threadSleep(randint(min(self._period), max(self._period)))
                 
                 # exiting from while loop when attack has been carried max_count times (min. 1)
                 break
@@ -147,7 +151,10 @@ class AllSafeWorkerMaster():
         @param: override, boolean - optional param to set the botnet in override mode (params set by GUI)
         """
         # parsing the configuration file to return a configuration dictionary
-        self._configuration = validateConfigFile(config_file, override)
+        try:
+            self._configuration = validateConfigFile(config_file, override)
+        except Exception:
+            raise Exception("Configuration file is not properly formatted, or missing schema in /utils directory!")
         if self._configuration == None:
             raise Exception("Configuration file is not properly formatted, or missing schema in /utils directory!")
 

