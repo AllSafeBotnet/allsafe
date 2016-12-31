@@ -10,7 +10,7 @@ Modified:   30 December 2016
 import os # debug os.getpid()
 
 from threading import Thread
-from multiprocessing.context import Process
+from multiprocessing import Process
 from datetime import datetime, date
 from time import time, sleep as threadSleep
 
@@ -210,13 +210,14 @@ class AllSafeWorkerMaster():
 
 
 class AllSafeBotnet():
-    def __init__():
+    def __init__(self):
         """
         This class represents the core functionalities for the AllSafeBotnet,
         it can be initialized and awaits to be called in order to transfer
         to another process an attack to be carried.
         """
         self._attack_counter = 0
+        print('BOTNET INIT PID', os.getpid())
 
     def attack(self, configuration):
         """
@@ -228,17 +229,20 @@ class AllSafeBotnet():
         botnet.start()
 
     class Botnet(Process):
-        def __init__(self, config, name='AllSafeBotnet'):
+        def __init__(self, configuration, name='AllSafeBotnetInstance'):
             super().__init__(name=name)
-            self._config = config
+            self._configuration = configuration
 
         def run(self):
+            print('BOTNET RUN PID', os.getpid())
             # simply creating a master and starting the attack
-            master = AllSafeWorkerMaster(self._config)
+            master = AllSafeWorkerMaster(self._configuration)
             master.initializeWorkers()
             master.executeBotnet()
+        
 
 if __name__ == "__main__":
+    # init botnet 
     allsafe = AllSafeBotnet()
-    # attack
+    # attack (you can specify each time a different configuration file)
     allsafe.attack('./utils/config_schema_example.json')
