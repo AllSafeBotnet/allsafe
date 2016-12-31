@@ -58,7 +58,7 @@ def validateConfigFile(config_file, override):
             configuration = json.load(configJSON)
             configJSON.close()
         # if configuration file does not exist... we return None.
-    except (FileNotFoundError, IOError) as error:
+    except (FileNotFoundError, IOError, ValueError) as error:
         return None
 
     # 0. compare root schema 
@@ -161,7 +161,7 @@ def updateConfigFile(config_file, configuration):
             configFile.write(json.dumps(configuration))
             configFile.close()
             return True
-    except (FileNotFoundError, IOError) as error:
+    except (FileNotFoundError, IOError, ValueError) as error:
         return False
 
 
