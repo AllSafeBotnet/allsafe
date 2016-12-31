@@ -20,15 +20,16 @@ class Request():
         # calling superclass init method
 
         # parameters initialization         
-        self._method = config_dict['method']
-        self._url = config_dict['url']
-        self._header = {
-            "user-agent" : config_dict['user-agent']
-        } 
-        self._encoding = config_dict['encoding']
-        self._payload = config_dict['payload']
-        self._response = config_dict['response']
+        self._method        = config_dict['method']
+        self._url           = config_dict['url']
+        self._header        = {
+                                "user-agent" : config_dict['user-agent']
+                              } 
+        self._encoding       = config_dict['encoding']
+        self._payload        = config_dict['payload']
+        self._response       = config_dict['response']
         self._responseheader = config_dict['response-header']
+        self._proxies        = config_dict['proxy_server']
 
 
 
@@ -50,6 +51,14 @@ class Request():
 
         # a new session is created
         s = requests.Session()
+
+        # check for any proxy to correctly formatted
+        for protocol in ['http', 'https']:
+            if len(self._proxies[protocol]) == 0:
+                del self._proxies[protocol]
+        # updating the session if necessary
+        if self._proxies:
+            s.proxies.update(self._proxies)
 
         # request performs
         r = s.send(req.prepare())
