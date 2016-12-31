@@ -60,8 +60,9 @@ class AllSafeWorker(Thread):
         This method prints out a human readable representation of this worker purpose
         """
         workerTarget  = self.getName()
-        workerTarget += " - TARGET: "  + self._request['url']
-        workerTarget += " - AGENT: "   + self._request['user-agent']
+        workerTarget += " - TARGET: "    + self._request['url']
+        workerTarget += " - RESOURCES: " + self._request['resources']
+        workerTarget += " - AGENT: "     + self._request['user-agent']
         return workerTarget
     
     def carryAttack(self):

@@ -22,6 +22,7 @@ class Request():
         # parameters initialization         
         self._method        = config_dict['method']
         self._url           = config_dict['url']
+        self._resources     = config_dict['resources']
         self._header        = {
                                 "user-agent" : config_dict['user-agent']
                               } 
@@ -39,20 +40,10 @@ class Request():
         the paramaters initliazed by the json configuration file
         """
 
-        # creation of the request container
-        req = requests.Request()
-
-        # parameters setting
-        req.method = self._method
-        req.url = self._url
-        req.data = self._payload
-        req.params = self._payload
-        req.headers = self._header
-
         # a new session is created
         s = requests.Session()
 
-        # check for any proxy to correctly formatted
+        # check for any proxy 
         for protocol in ['http', 'https']:
             if len(self._proxies[protocol]) == 0:
                 del self._proxies[protocol]
@@ -60,16 +51,29 @@ class Request():
         if self._proxies:
             s.proxies.update(self._proxies)
 
-        # request performs
-        r = s.send(req.prepare())
+        # iterating over resources to perform sequential requests
+        # toward different resources from a unique session
+        for resource in self._resources:
+            # creation of the request container
+            req = requests.Request()
+            
+            # parameters setting
+            req.method = self._method
+            req.url = self._url
+            req.data = self._payload
+            req.params = self._payload
+            req.headers = self._header
 
-        # based on the preferences the response will be given
-        if (self._response == "json"):
-            try:
-                return r.json()
-            except ValueError:
-                raise Exception("Error in JSON encoding / decoding preparing the request")
-        
-        if (self._response == "raw"):
-            return r.raw
-        return r.text
+            # request performs
+            r = s.send(req.prepare())
+
+            # based on the preferences the response will be given
+            #if (self._response == "json"):
+            #    try:
+            #        return r.json()
+            #    except ValueError:
+            #        raise Exception("Error in JSON encoding / decoding preparing the request")
+            #
+            #if (self._response == "raw"):
+            #    return r.raw
+            #return r.text

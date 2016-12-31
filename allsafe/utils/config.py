@@ -43,6 +43,7 @@ def validateConfigFile(config_file, override):
     requestSchema = {
         "method"        : "GET",
         "url"           : "",
+        "resources"     : ["/", "/index.html"],
         "proxy_server"  : { "http" : "", "https" : "" },
         "user-agent"    : rootSchema['user-agent_b'],
         "encoding"      : "UTF-8",
@@ -251,7 +252,19 @@ def validateRequestParams(request, schema):
     """
     # first of all we check if the url is specified
     if ('url' not in request) or (len(request['url']) == 0):
+        raise Exception('No url specified!')
         return None
+    if ('resources' not in request) or (len(request['resources']) < 1):
+        raise Exception('At least two resources are needed to start the attack!')
+        return None
+    # validating url and resources
+    url = request['url']
+    if url[len(url) - 1] != '/':
+        url += '/'
+        request['url'] = url
+    for res in request['resources']:
+        if (res[0] == '/') and (len(res) > 1):
+            d['resource'].index(res) = res[1:]
 
     # check if the other params are to be set or custom
     for param in ['method', 'user-agent', 'encoding', 'payload', 'proxy_server', 'response', 'response-header']:
