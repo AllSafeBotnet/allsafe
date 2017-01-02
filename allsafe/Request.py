@@ -60,7 +60,7 @@ class Request():
             # parameters setting
             req.method = self._method
             req.url = self._url
-            req.data = self._payload
+            req.data = self._payload  #TODO write because data and params use payload
             req.params = self._payload
             req.headers = self._header
 

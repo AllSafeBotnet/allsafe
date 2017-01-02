@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Admin Panel</title>
@@ -99,8 +99,9 @@
         }
 
         .btn-block {
-            width: 100%;
+            width: 50%;
             display: block;
+            margin: 25%;
         }
 
         * {
@@ -118,8 +119,6 @@
         }
 
         body {
-            width: 100%;
-            height: 100%;
             font-family: 'Open Sans', sans-serif;
             background: #092756;
             background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -moz-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);
@@ -130,21 +129,19 @@
             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3E1D6D', endColorstr='#092756', GradientType=1);
         }
 
-        .login {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin: -150px 0 0 -150px;
-            width: 300px;
-            height: 300px;
-        }
-
-        .login h1 {
+        h1 {
             color: #fff;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             letter-spacing: 1px;
             text-align: center;
         }
+
+        h2 {
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
 
         input {
             width: 100%;
@@ -170,22 +167,44 @@
             box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4), 0 1px 1px rgba(255, 255, 255, 0.2);
         }
 
+        .first-column, .second-column, .third-column {
+            width: 33%;
+            float: left;
+            padding: 15px;
+        }
+
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
 </head>
 <body>
-<div class="login">
+<div>
     <h1>C&C Admin Panel</h1>
-        <div align="left">
-        <h2>Request configuration</h2>
-    <form method="post" action="/">
-        <input type="text" name="ip" placeholder="URL" required="required"/>
-        <input type="text" name="u" placeholder="Method" required="required"/>
-        <input type="text" name="p" placeholder="Encoding" required="required"/>
-        <button type="submit" class="btn btn-primary btn-block btn-large">Submit</button>
-    </form>
+    <form method="get" action="/submit">
+        <div style="width: 100%;">
+        <div class="first-column">
+            <h2>Request configuration</h2>
+            <input type="text" name="ip" placeholder="URL" required="required"/>
+            <input type="text" name="u" placeholder="Method" required="required"/>
+            <input type="text" name="p" placeholder="Encoding" required="required"/>
         </div>
+        <div class="second-column">
+            <h2>Request configuration</h2>
+            <input type="text" name="res" placeholder="Resource (use ; to separate them)" required="required"/>
+            <input type="text" name="proxy" placeholder="Proxy server" required="required"/>
+            <input type="text" name="payload" placeholder="Payload (URL for GET request format)" required="required"/>
+        </div>
+        <div class="third-column">
+            <h2>Request configuration</h2>
+            <input type="text" name="ip" placeholder="IP address of the C&C" required="required"/>
+        </div>
+        <div style="width: 100%;">
+            <button type="submit" name="upload" value="local" class="btn btn-primary btn-large">Upload locally</button>
+            <button type="submit" name="upload" value="remote" class="btn btn-primary btn-large">Upload to C&C</button>
+            <button type="submit" name="attack" value="local" class="btn btn-primary btn-large">Carry attack locally</button>
+            <button type="submit" name="attack" value="remote" class="btn btn-primary btn-large">Carry a coordinated attack</button>
+        </div>
+    </form>
 </div>
 
 </body>
