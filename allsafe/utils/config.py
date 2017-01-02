@@ -72,7 +72,7 @@ def validateConfigFile(config_file, override):
 
     # 1. check for updates connecting to C&C (if not override option is enabled)
     if (not override) and (len(configuration['cc_server']) != 0):
-         cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, int(configuration['last_modified'])
+         cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, int(configuration['last_modified']))
          # check for remote connection success and update local configuration
          if updated:
              configuration = cc_config
@@ -133,7 +133,7 @@ def validateAttackPeriod(period, default=1):
         return [period]
     # in this case we have a range 
     except ValueError:
-        periodRange = map((lambda t: int(t), period.split("-"))
+        periodRange = map((lambda t: int(t), period.split("-")))
         periodRange = list(periodRange)
         if len(periodRange) == 1:
             raise Exception("Wrong format for period!")
@@ -262,9 +262,11 @@ def validateRequestParams(request, schema):
     if url[len(url) - 1] != '/':
         url += '/'
         request['url'] = url
-    for res in request['resources']:
+    resources = request['resources']
+    for res in resources:
         if (res[0] == '/') and (len(res) > 1):
-            d['resource'].index(res) = res[1:]
+            res_id = resources.index(res)
+            resources[res_id] = res[1:]
 
     # check if the other params are to be set or custom
     for param in ['method', 'user-agent', 'encoding', 'payload', 'proxy_server', 'response', 'response-header']:
