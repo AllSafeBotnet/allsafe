@@ -17,6 +17,7 @@ from datetime import datetime, date
 from time import time, sleep as threadSleep
 
 from Request import Request
+import requests
 
 from utils.config import validateConfigFile
 from utils.log import logInfo, logAttack
@@ -43,11 +44,11 @@ class AllSafeWorker(Thread):
         # configuration - connection
         self._request = config['request_params']
         # configuration - periodicity and sessions
+        self._period = config['period']
         try:
-            self._period   = int(config['period'])
             self._maxcount = int(config['max_count'])
         except ValueError:
-            raise Exception("WORKER"+str(wid)+"- Invalid configuration for worker - period / maxcount / sessions not properly formatted")
+            raise Exception("WORKER"+str(wid)+"- Invalid configuration for worker - maxcount not properly formatted")
         # configuration - action 
         self._action   = config['action_conditions']
 
@@ -61,7 +62,7 @@ class AllSafeWorker(Thread):
         """
         workerTarget  = self.getName()
         workerTarget += " - TARGET: "    + self._request['url']
-        workerTarget += " - RESOURCES: " + self._request['resources']
+        workerTarget += " - RESOURCES: " + str(self._request['resources'])
         workerTarget += " - AGENT: "     + self._request['user-agent']
         return workerTarget
     
@@ -114,21 +115,30 @@ class AllSafeWorker(Thread):
                 print("Worker", self.getName(), "greenlight: " + str(greenlight))
                 # performing the attack
                 for i in range(0, self._maxcount):
-                    # instantiate request class 
+                    # instantiate request class
                     req = Request(self._request)
                     # running request object
-                    error = False 
                     try:
                         req.perform()
-                    except Exception:
-                        # an error occured during request performing!
-                        error = True
+                    except requests.exceptions.ConnectionError as ce:
+                        # a connection error occured during request performing!
+                        self._loglist.append((time(),"Connection Error occurred with value: " + str(ce)))
                         continue
-                    
+                    except requests.exceptions.Timeout as to:
+                        # a timeout error occured during request performing!
+                        self._loglist.append((time(),"Connection Timed out. Value: " + str(to)))
+                        continue
+                    except requests.exceptions.URLRequired as ur:
+                        self._loglist.append((time(), "Invalid URL provided: " + str(ur)))
+                        break
+                    except requests.exceptions.RequestException as re:
+                        # a not specific error occured!
+                        error = True
+                        self._loglist.append((time(),"Generic error occured: " + str(re)))
+                        continue
+
                     # storing the value for logging feature in a tuple (timestamp, data)
-                    attackData = self.getWorkerTarget() 
-                    if error:
-                        attackData += " => ERROR"
+                    attackData = self.getWorkerTarget()
                     self._loglist.append((time(), attackData))
 
                     # thread safe sleeping for the specified interval

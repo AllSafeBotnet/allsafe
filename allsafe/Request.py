@@ -43,14 +43,19 @@ class Request():
         # a new session is created
         s = requests.Session()
 
-        # check for any proxy 
-        for protocol in ['http', 'https']:
-            if len(self._proxies[protocol]) == 0:
-                del self._proxies[protocol]
+        #TODO maybe it could be written in a better way
+        # check for any proxy
+        proxies = dict()
+        for protocol in self._proxies:
+            print(protocol)
+            if (protocol == 'http' or protocol == 'https') and (len(self._proxies[protocol]) != 0):
+                proxies[protocol] = self._proxies[protocol]
+        # updating proxies after validation
+        self._proxies = proxies
+
         # updating the session if necessary
         if self._proxies:
             s.proxies.update(self._proxies)
-
         # iterating over resources to perform sequential requests
         # toward different resources from a unique session
         for resource in self._resources:
@@ -65,7 +70,7 @@ class Request():
             req.headers = self._header
 
             # request performs
-            r = s.send(req.prepare())
+            r = s.send(req.prepare(),timeout=0.5)
 
             # based on the preferences the response will be given
             #if (self._response == "json"):

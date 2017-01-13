@@ -95,7 +95,7 @@ def prepareConfigFile(where, params):
     for res in params['resources'].split(";"):
         new_res.append(res)
     paramconfig['resources'] = new_res
-    # TODO add proxy
+    # TODO add prox
     paramconfig['encoding'] = params['encoding']
     configfile['targets'][0]['request_params'] = paramconfig
 
