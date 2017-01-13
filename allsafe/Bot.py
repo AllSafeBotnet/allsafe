@@ -38,7 +38,7 @@ def login(username, password):
 def validate(username,password):
     if (username == "federico" and password == "alessio"):
         #TODO Can we do it in a more effective way?
-        return True;
+        return True
 
 
 if __name__ == "__main__":
