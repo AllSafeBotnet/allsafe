@@ -5,7 +5,7 @@ It will provide access to the Command-and-Control server as well as
 the validation for the configuration dictionary.
 
 Created:    29 December 2016
-Modified:   30 December 2016
+Modified:   14 January  2017
 """
 
 import json
@@ -27,7 +27,7 @@ def validateConfigFile(config_file, override):
         "last_modified" : round(time()),
         "cc_server"     : "",
         "user-agent_b"  : "ALLSAFE_UADEFAULT",
-        "log_file"      : "../log.txt",
+        "log_file"      : "../data/log.txt",
 
         "targets"       : []
     }

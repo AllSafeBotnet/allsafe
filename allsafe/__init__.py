@@ -57,7 +57,7 @@ def performAttack():
     if 'attack' in request.form:
         if request.form['attack'] == 'begin':
             allsafe = Worker.AllSafeBotnet()
-            allsafe.attack('./utils/current_attack.txt', override=True)
+            allsafe.attack('./data/current_attack.txt', override=True)
             return "OK", 200
     else:
         return "Forbidden!", 403
@@ -106,7 +106,7 @@ def prepareConfigFile(where, params):
     configfile['targets'][0]['request_params'] = paramconfig
 
     #The json configuration will be written
-    file = open("./utils/current_attack.txt", "w")
+    file = open("./data/current_attack.txt", "w")
     file.write(json.dumps(configfile))
     file.close()
     return
