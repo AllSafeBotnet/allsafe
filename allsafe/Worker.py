@@ -261,7 +261,7 @@ class AllSafeBotnet():
         """
         Method to start a new attack session.
         @param: configuration, string - path to the configuration file
-        @return: a tuple (attack_statistics_dictionary, attack_counter)
+        @return: a tuple (identification, attack_statistics_dictionary, attack_counter)
         """
         self._attack_counter += 1
         self._botnet_instance = self.Botnet(configuration, self._botnet_queue)
@@ -272,7 +272,7 @@ class AllSafeBotnet():
         attackstats = self._botnet_queue.get()
         botnet.join()
         # returning statistics and counter
-        return attackstats, self._attack_counter
+        return self._botnet_identity, attackstats, self._attack_counter
 
     def abort(self):
         """
