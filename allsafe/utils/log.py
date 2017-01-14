@@ -76,7 +76,7 @@ def logCCUpdate(server, id, logdata):
 
     @param server, string - C&C remote address
     @param id, string - botnet unique identifier
-    @param logdata, data - data to be logged into C&C
+    @param logdata, string - data to be logged into C&C
     @return wheter update is valid
     """
 
