@@ -253,23 +253,36 @@ class AllSafeBotnet():
         self._botnet_identity = str(hash(os.path.expanduser('~')))
         # initializing queue 
         self._botnet_queue    = Queue()
-        # initiaizling attack statistics
-        self._botnet_stats    = []
+        # botnet instance
+        self._botnet_instance = None
 
 
     def attack(self, configuration, override=False):
         """
         Method to start a new attack session.
         @param: configuration, string - path to the configuration file
+        @return: a tuple (attack_statistics_dictionary, attack_counter)
         """
         self._attack_counter += 1
-        botnet = self.Botnet(configuration, self._botnet_queue)
+        self._botnet_instance = self.Botnet(configuration, self._botnet_queue)
+        botnet = self._botnet_instance
+
         botnet.start()
         # retrieving statistics and joining
         attackstats = self._botnet_queue.get()
         botnet.join()
-        # returning statistics
-        return attackstats
+        # returning statistics and counter
+        return attackstats, self._attack_counter
+
+    def abort(self):
+        """
+        Method to abort botnet execution if any is currently operational.
+        """
+        botnet = self._botnet_instance
+        if botnet:
+            if botnet.is_alive():
+                botnet.terminate()
+                self._botnet_queue = Queue()
 
 
     class Botnet(Process):
