@@ -182,25 +182,23 @@
     <h1>C&C Admin Panel</h1>
     <form method="POST" action="/submit">
         <div class="first-column">
-            <input type="text" name="url" value = "http://"  placeholder="URL" required="required"/>
+            <input type="text" name="url" value = "http://"  placeholder="URL"/>
              <select name="method">
                   <option value="get" selected>GET</option>
                   <option value="post">POST</option>
              </select>
-            <input type="text" name="encoding" value="utf-8" placeholder="Encoding" required="required"/>
+            <input type="text" name="encoding" value="utf-8" placeholder="Encoding"/>
         </div>
         <div class="second-column">
-            <input type="text" name="resources" value="/" placeholder="Resource (use ; to separate them)" required="required"/>
-            <input type="text" name="proxies" value="" placeholder="Proxy server" required="required"/>
-            <input type="text" name="payload" value="key=value" placeholder="Payload (URL for GET request format)" required="required"/>
+            <input type="text" name="resources" value="/" placeholder="Resource (use ; to separate them)"/>
+            <input type="text" name="proxies" value="" placeholder="Proxy server"/>
+            <input type="text" name="payload" value="key=value" placeholder="Payload (URL for GET request format)" />
         </div>
         <div class="third-column">
-            <input type="text" name="ip" value="" placeholder="IP address of the C&C" required="required"/>
+            <input type="text" name="timeout" value="0.5" placeholder="Timeout"/>
         </div>
-        <div style="width: 100%;">
-            <button type="submit" name="upload" value="none" class="btn btn-primary btn-large">Prepare configuration file</button>
-            <button type="submit" name="attack" value="local" class="btn btn-primary btn-large">Carry attack locally</button>
-            <button type="submit" name="attack" value="remote" class="btn btn-primary btn-large">Carry a coordinated attack</button>
+        <div style="float: right;">
+            <button type="submit" name="attack" value="begin" class="btn btn-primary btn-large">Carry attack</button>
         </div>
     </form>
 </div>

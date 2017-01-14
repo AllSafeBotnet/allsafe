@@ -179,11 +179,15 @@
 
 <body>
 <div class="login">
-    <h1>Access to C&C</h1>
+    <h1>Access Gate</h1>
         <form method="POST" action="/">
+            <input type="text" name="ip" value="" placeholder="IP Address of the C&C" required="required"/>
             <input type="text" name="u" value="fsociety" placeholder="Username" required="required"/>
             <input type="password" name="p" value="steelmountain" placeholder="Password" required="required"/>
-            <button type="submit" class="btn btn-primary btn-block btn-large">Let me in.</button>
+            <button type="submit" name="access" value="remote" class="btn btn-primary btn-block btn-large">Let me in.</button>
+        </form>
+        <form method="POST" action="/">
+            <button type="submit" name="access" value="local" class="btn btn-primary btn-block btn-large">or Prepare a local attack</button>
         </form>
 </div>
 

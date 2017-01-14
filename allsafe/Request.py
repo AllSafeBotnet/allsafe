@@ -47,7 +47,6 @@ class Request():
         # check for any proxy
         proxies = dict()
         for protocol in self._proxies:
-            print(protocol)
             if (protocol == 'http' or protocol == 'https') and (len(self._proxies[protocol]) != 0):
                 proxies[protocol] = self._proxies[protocol]
         # updating proxies after validation
