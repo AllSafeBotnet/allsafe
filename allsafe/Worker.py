@@ -203,6 +203,13 @@ class AllSafeWorkerMaster():
                 # logging worker reference
                 logInfo(self._log, worker.getWorkerTarget())
                 self._workers.append(worker)
+        
+        # loggins system statistics on local log file 
+        # collecting stats...
+        syssummary  = "system:  " + self._sysstats.getPlatformSummary() + "\n"
+        syssummary += "environ: " + self._sysstats.getEnvironmentSummary() + "\n\"
+        # printing in log
+        logInfo(self._log, "\nSYSTEM STATISTICS: \n" + syssummary)
 
         # logging the initialization routine - end
         logInfo(self._log, "------------------- </SETUP> -------------------")
