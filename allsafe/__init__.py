@@ -19,6 +19,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 import Botnet
+from utils.config import rootSchema, targetSchema, requestSchema
 
 app = Flask(__name__)
 
