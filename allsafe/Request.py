@@ -52,6 +52,10 @@ class Request():
         # updating proxies after validation
         self._proxies = proxies
 
+        # polishing url
+        if '://' not in self._url:
+            self._url = 'http://' + self._url
+
         # updating the session if necessary
         if self._proxies:
             s.proxies.update(self._proxies)

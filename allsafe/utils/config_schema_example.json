@@ -1,8 +1,8 @@
 {
     "last_modified" : 1478636841,
-    "cc_server"     : "",
+    "cc_server"     : "http://127.0.0.1:5000",
     "user-agent_b"  : "ELLIOT",
-    "log_file"      : "./log.txt",
+    "log_file"      : "./data/log.txt",
 
     "targets" : [
         {

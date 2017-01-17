@@ -15,7 +15,7 @@ class SysStatistics:
         a summary of the system statistics about the enviroment
         into which the botnet client is currently running.
         """
-        self._osname   = os.name()                  # 'posix', 'nt', 'java'
+        self._osname   = os.name                    # 'posix', 'nt', 'java'
         self._environ  = os.environ                 # environment 
         self._platform = platform.platform()        # human readable platform summary
         self._node     = platform.node()            # name of the node as in the local network
@@ -29,7 +29,7 @@ class SysStatistics:
         summary = ""
         summary += str(self._osname) + " >> "
         summary += str(self._platform) + " >> "
-        summmry += str(self._node)
+        summary += str(self._node)
 
         return summary
 
