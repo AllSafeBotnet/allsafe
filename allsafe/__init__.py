@@ -18,7 +18,7 @@ from time import time
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-import Worker
+import Botnet
 
 app = Flask(__name__)
 
