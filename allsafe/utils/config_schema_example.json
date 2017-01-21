@@ -26,10 +26,6 @@
                     "https" : "https://proxy.fsociety.com"
                 },
                 "encoding": "utf-8",
-                "payload": {
-                    "key1": "value1",
-                    "key2": "value2"
-                },
                 "response": "raw",
                 "response-header": 0
             },

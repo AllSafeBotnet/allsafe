@@ -1,132 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
         /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
         @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
-        .btn {
-            display: inline-block;
-            *display: inline;
-            *zoom: 1;
-            padding: 4px 10px 4px;
-            margin-bottom: 0;
-            font-size: 13px;
-            line-height: 18px;
-            color: #333333;
-            text-align: center;
-            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-            vertical-align: middle;
-            background-color: #f5f5f5;
-            background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-            background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
-            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-            background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-            background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-            background-image: linear-gradient(top, #ffffff, #e6e6e6);
-            background-repeat: repeat-x;
-            filter: progid:dximagetransform.microsoft.gradient(startColorstr=#ffffff, endColorstr=#e6e6e6, GradientType=0);
-            border-color: #e6e6e6 #e6e6e6 #e6e6e6;
-            border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-            border: 1px solid #e6e6e6;
-            -webkit-border-radius: 4px;
-            -moz-border-radius: 4px;
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-            -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-            cursor: pointer;
-            *margin-left: .3em;
-        }
-
-        .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] {
-            background-color: #e6e6e6;
-        }
-
-        .btn-large {
-            padding: 9px 14px;
-            font-size: 15px;
-            line-height: normal;
-            -webkit-border-radius: 5px;
-            -moz-border-radius: 5px;
-            border-radius: 5px;
-        }
-
-        .btn:hover {
-            color: #333333;
-            text-decoration: none;
-            background-color: #e6e6e6;
-            background-position: 0 -15px;
-            -webkit-transition: background-position 0.1s linear;
-            -moz-transition: background-position 0.1s linear;
-            -ms-transition: background-position 0.1s linear;
-            -o-transition: background-position 0.1s linear;
-            transition: background-position 0.1s linear;
-        }
-
-        .btn-primary, .btn-primary:hover {
-            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-            color: #ffffff;
-        }
-
-        .btn-primary.active {
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .btn-primary {
-            background-color: #4a77d4;
-            background-image: -moz-linear-gradient(top, #6eb6de, #4a77d4);
-            background-image: -ms-linear-gradient(top, #6eb6de, #4a77d4);
-            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#6eb6de), to(#4a77d4));
-            background-image: -webkit-linear-gradient(top, #6eb6de, #4a77d4);
-            background-image: -o-linear-gradient(top, #6eb6de, #4a77d4);
-            background-image: linear-gradient(top, #6eb6de, #4a77d4);
-            background-repeat: repeat-x;
-            filter: progid:dximagetransform.microsoft.gradient(startColorstr=#6eb6de, endColorstr=#4a77d4, GradientType=0);
-            border: 1px solid #3762bc;
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
-            filter: none;
-            background-color: #4a77d4;
-        }
-
-        .btn-block {
-            width: 50%;
-            display: block;
-            margin: 25%;
-        }
-
-        * {
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -ms-box-sizing: border-box;
-            -o-box-sizing: border-box;
-            box-sizing: border-box;
-        }
-
-        html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
         body {
             font-family: 'Open Sans', sans-serif;
             background: #092756;
-            background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -moz-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);
-            background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -webkit-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%, #092756 100%);
-            background: -o-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -o-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -o-linear-gradient(-45deg, #670d10 0%, #092756 100%);
-            background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -ms-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -ms-linear-gradient(-45deg, #670d10 0%, #092756 100%);
-            background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), linear-gradient(to bottom, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), linear-gradient(135deg, #670d10 0%, #092756 100%);
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3E1D6D', endColorstr='#092756', GradientType=1);
+        {#            background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -moz-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);#}{#            background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -webkit-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%, #092756 100%);#}{#            background: -o-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -o-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -o-linear-gradient(-45deg, #670d10 0%, #092756 100%);#}{#            background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -ms-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -ms-linear-gradient(-45deg, #670d10 0%, #092756 100%);#}{#            background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), linear-gradient(to bottom, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), linear-gradient(135deg, #670d10 0%, #092756 100%);#} filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3E1D6D', endColorstr='#092756', GradientType=1);
         }
 
         h1 {
@@ -136,71 +25,253 @@
             text-align: center;
         }
 
-        h2 {
+        h3 {
+            color: #fff;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             letter-spacing: 1px;
             text-align: center;
         }
 
-
-        input, select {
-            width: 100%;
-            margin-bottom: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border: none;
-            outline: none;
-            padding: 10px;
-            font-size: 13px;
-            color: #fff;
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-            box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.2), 0 1px 1px rgba(255, 255, 255, 0.2);
-            -webkit-transition: box-shadow .5s ease;
-            -moz-transition: box-shadow .5s ease;
-            -o-transition: box-shadow .5s ease;
-            -ms-transition: box-shadow .5s ease;
-            transition: box-shadow .5s ease;
+        input {
+            color: white;
         }
 
-        input:focus {
-            box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4), 0 1px 1px rgba(255, 255, 255, 0.2);
+        h5 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .first-column, .second-column, .third-column {
-            width: 33%;
-            float: left;
-            padding: 15px;
-        }
 
     </style>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('select').material_select();
+            $('.modal').modal();
+        });
+    </script>
 </head>
+
 <body>
 <div>
-    <h1>Local Admin Panel</h1>
-    <form method="POST" action="/submit">
-        <div class="first-column">
-            <input type="text" name="url" value = "http://"  placeholder="URL"/>
-             <select name="method">
-                  <option value="get" selected>GET</option>
-                  <option value="post">POST</option>
-             </select>
-            <input type="text" name="encoding" value="utf-8" placeholder="Encoding"/>
+    <h3>Local Admin Panel</h3>
+
+    <form method="POST" id="configForm" action="/submit" style="margin: 5% 10% 0% 10%;">
+        <div id="global_config_continer" class="section container">
+            <h5>Global Configuration</h5>
+            <div class="row">
+                <div class="col l4 input-field">
+                    <select name="AMPM">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                        <option value="AMPM">AM & PM</option>
+                    </select>
+                    <label>Choose day phase of the attack</label>
+                </div>
+                <div class="col l4 input-field">
+                    <label>Time Span: Start hour (HH format)</label>
+                    <input name="hour_start" type="text" placeholder="01">
+                </div>
+                <div class="col l4 input-field">
+                    <label>Time Span: End hour (HH format)</label>
+                    <input id="hour_end" name="hour_end" type="text" placeholder="23">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l6 input-field">
+                    <select multiple name="avoid_week">
+                        <option value="" disabled selected>Choose the days to avoid</option>
+                        <option value="0">Monday</option>
+                        <option value="1">Tuesday</option>
+                        <option value="2">Wednesday</option>
+                        <option value="3">Thursday</option>
+                        <option value="4">Friday</option>
+                        <option value="5">Saturday</option>
+                        <option value="6">Sunday</option>
+                    </select>
+                    <label>Week day to avoid</label>
+                </div>
+                <div class="col l6 input-field">
+                    <select multiple name="avoid_month">
+                        <option value="" disabled selected>Choose the months to avoid</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <label>Months to avoid</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l3 input-field">
+                    <label>Contact period in ms</label>
+                    <input type="text" name="period" placeholder="1">
+                </div>
+                <div class="col l3 input-field offset-l3">
+                    <label>Maximum contacts</label>
+                    <input type="text" name="max_count" placeholder="1000">
+                </div>
+
+            </div>
         </div>
-        <div class="second-column">
-            <input type="text" name="resources" value="/" placeholder="Resource (use ; to separate them)"/>
-            <input type="text" name="proxies" value="" placeholder="Proxy server"/>
-            <input type="text" name="payload" value="key=value" placeholder="Payload (URL for GET request format)" />
+
+
+        <div id="target_params_wrapper">
+            <div id="target_params" class="section container">
+            <h5>Target 1 Configuration</h5>
+            <div class="row">
+                <div class="col l6 input-field">
+                    <label>Target URL</label>
+                    <input type="text" name="url" value="http://" aria-describedby="basic-addon1">
+                </div>
+                <div class="col l6 input-field">
+                    <label>C&C URL</label>
+                    <input type="text" name="cc_server" value="http://" aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l12 file-field input-field resources">
+                    <button type="button" class="btn newtarget">Add New Resource</button>
+                    <div class="file-path-wrapper">
+                        <input type="text" name="resources" placeholder="/" aria-label="...">
+                    </div>
+                </div>
+                <script>
+                    $(function () {
+                        $(".newtarget").click(function () {
+                            $(this).closest(".resources").append('<button type="button" class="btn" style="visibility: hidden;">Add New Resource</button>');
+                            $(this).closest(".resources").append('<div class="file-path-wrapper"> <input type="text" name="resources" placeholder="/" aria-label="..."> </div>');
+                        })
+                    });
+                </script>
+            </div>
+            <div class="row">
+                <div class="col l12 file-field input-field proxies">
+                    <button type="button" class="btn newproxy">Add New Proxy</button>
+                    <div class="file-path-wrapper ">
+                        <input type="text" name="proxy" placeholder="http://" aria-label="...">
+                    </div>
+                </div>
+                <script>
+                    $(function () {
+                        $(".newproxy").click(function () {
+                            $(this).closest(".proxies").append('<button type="button" class="btn" style="visibility: hidden;">Add New Proxy</button>');
+                            $(this).closest(".proxies").append('<div class="file-path-wrapper"> <input type="text" name="proxy" placeholder="http://" aria-label="..."> </div>');
+                        })
+                    });
+                </script>
+            </div>
+            <div class="row">
+                <div class="col l4 input-field">
+                    <label>Timeout</label>
+                    <input type="text" name="timeout" value="0.5" placeholder="Timeout"/>
+                </div>
+                <div class="col l4 input-field">
+                    <select name="method">
+                        <option value="GET" selected>GET</option>
+                        <option value="POST">POST</option>
+                    </select>
+                </div>
+                <div class="col l4 input-field">
+                    <select name="encoding">
+                        <option value="utf-8" selected>UTF-8</option>
+                        <option value="utf-8">---</option>
+                    </select>
+                </div>
+            </div>
+            <input style="display: none" type="text" name="attack" value="begin">
         </div>
-        <div class="third-column">
-            <input type="text" name="timeout" value="0.5" placeholder="Timeout"/>
-        </div>
-        <div style="float: right;">
-            <button type="submit" name="attack" value="begin" class="btn btn-primary btn-large">Carry attack</button>
         </div>
     </form>
+    <div class="wrapper" style="text-align: center;">
+        <button id="add_new_target" type="button" class="btn">Add New Target</button>
+    </div>
+    <script>
+                $(function () {
+                    $("#add_new_target").click(function () {
+                        $("#configForm").append($("#target_params_wrapper").html());
+                    })
+                })
+            </script>
+
+    <div style="float: right;">
+        {#            <button type="submit" name="attack" value="begin" class="btn btn-primary btn-large">Carry attack</button>#}
+        <div class="fixed-action-btn">
+            <a class="modal-trigger btn-floating btn-large red waves-effect waves-light" href="#modal1">
+                <i class="material-icons">send</i>
+            </a>
+        </div>
+        <div id="modal1" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <h4>Attack confirmation</h4>
+                <p>Are you ready to perform an attack using our system?</p>
+                <div class="progress" style="visibility: hidden;">
+                    <div class="indeterminate"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" id="begin" class="modal-action waves-effect waves-green btn-flat ">Yes</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
+            </div>
+
+            <script>
+                $(function () {
+                    $("#begin").click(function () {
+                        var formArray = $("#configForm").serializeArray();
+                        var data = {};
+                        $(formArray).each(function (index, elem) {
+                            if (elem.name in data) {
+                                if ($.isArray(data[elem.name]))
+                                    data[elem.name].push(elem.value);
+                                else
+                                    var temp = data[elem.name]
+                                data[elem.name] = []
+                                data[elem.name].push(temp)
+                                data[elem.name].push(elem.value)
+                            } else {
+                                data[elem.name] = elem.value;
+                            }
+                        });
+                        console.log(data);
+                        $.ajax({
+                            url: "/submit",
+                            method: "POST",
+                            data: JSON.stringify(data),
+                            dataType: "json",
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (result) {
+                                $('.progress').css("visibility", "hidden");
+                                console.log("done");
+                                console.log(data);
+                            },
+                            progress: function () {
+                                $('.progress').css("visibility", "visible");
+                            },
+                            error: function () {
+                                console.log(data);
+                            }
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+
 </div>
 
 </body>

