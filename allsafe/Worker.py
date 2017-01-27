@@ -77,10 +77,10 @@ class AllSafeWorker(Thread):
         # retrieving current date and time - it uses UTC based comparison
         today  = date.today()
         utcnow = datetime.utcnow()
-        # checking for day 
-        if today.month in self._action['avoid_month']:
+        # checking for day
+        if (today.weekday() + 1) in self._action['avoid_week']:
             return False
-        if (today.weekday()+1) in self._action['avoid_week']:
+        if (today.day) in self._action['avoid_month']:
             return False
 
         # check if there is any particolar attack time (we assume that is can

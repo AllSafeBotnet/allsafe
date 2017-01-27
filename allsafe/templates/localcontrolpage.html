@@ -64,150 +64,216 @@
     <h3>Local Admin Panel</h3>
 
     <form method="POST" id="configForm" action="/submit" style="margin: 5% 10% 0% 10%;">
+        <input style="display: none" type="text" name="attack" value="begin">
         <div id="global_config_continer" class="section container">
             <h5>Global Configuration</h5>
-            <div class="row">
-                <div class="col l4 input-field">
-                    <select name="AMPM">
-                        <option value="AM">AM</option>
-                        <option value="PM">PM</option>
-                        <option value="AMPM">AM & PM</option>
-                    </select>
-                    <label>Choose day phase of the attack</label>
-                </div>
-                <div class="col l4 input-field">
-                    <label>Time Span: Start hour (HH format)</label>
-                    <input name="hour_start" type="text" placeholder="01">
-                </div>
-                <div class="col l4 input-field">
-                    <label>Time Span: End hour (HH format)</label>
-                    <input id="hour_end" name="hour_end" type="text" placeholder="23">
-                </div>
+            <div class="row col l12 input-field">
+                <label>C&C URL</label>
+                <input type="text" name="cc_server" aria-describedby="basic-addon1">
             </div>
-            <div class="row">
-                <div class="col l6 input-field">
-                    <select multiple name="avoid_week">
-                        <option value="" disabled selected>Choose the days to avoid</option>
-                        <option value="0">Monday</option>
-                        <option value="1">Tuesday</option>
-                        <option value="2">Wednesday</option>
-                        <option value="3">Thursday</option>
-                        <option value="4">Friday</option>
-                        <option value="5">Saturday</option>
-                        <option value="6">Sunday</option>
-                    </select>
-                    <label>Week day to avoid</label>
-                </div>
-                <div class="col l6 input-field">
-                    <select multiple name="avoid_month">
-                        <option value="" disabled selected>Choose the months to avoid</option>
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
-                    <label>Months to avoid</label>
-                </div>
+            <div class="row col l12 input-field">
+                <label>Custom User Agent</label>
+                <input type="text" name="user_agent" aria-describedby="basic-addon1">
             </div>
-            <div class="row">
-                <div class="col l3 input-field">
-                    <label>Contact period in ms</label>
-                    <input type="text" name="period" placeholder="1">
-                </div>
-                <div class="col l3 input-field offset-l3">
-                    <label>Maximum contacts</label>
-                    <input type="text" name="max_count" placeholder="1000">
-                </div>
-
+            <div class="row col l12 input-field">
+                <label>Log path</label>
+                <input type="text" name="log_file" aria-describedby="basic-addon1">
             </div>
         </div>
+        <script>
+            var x = 1;
+            $(function () {
+                $("#target_params_wrapper h5").text("Target " + String(x) + " Configuration");
+                x += 1;
+            })
+        </script>
+        <div id="target_container">
+            <div id="target_params_wrapper">
+                <div class="section container target_params">
+                    <input style="visibility: hidden;" name="divider">
+                    <h5></h5>
 
-
-        <div id="target_params_wrapper">
-            <div id="target_params" class="section container">
-            <h5>Target 1 Configuration</h5>
-            <div class="row">
-                <div class="col l6 input-field">
-                    <label>Target URL</label>
-                    <input type="text" name="url" value="http://" aria-describedby="basic-addon1">
-                </div>
-                <div class="col l6 input-field">
-                    <label>C&C URL</label>
-                    <input type="text" name="cc_server" value="http://" aria-describedby="basic-addon1">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col l12 file-field input-field resources">
-                    <button type="button" class="btn newtarget">Add New Resource</button>
-                    <div class="file-path-wrapper">
-                        <input type="text" name="resources" placeholder="/" aria-label="...">
+                    <div class="row">
+                        <div class="col l12 input-field">
+                            <label>Target URL</label>
+                            <input type="text" name="url_1" value="http://" aria-describedby="basic-addon1" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12 file-field input-field resources">
+                            <div class="res_cont">
+                                <button type="button" class="btn newres">Add New Resource</button>
+                                <div class="file-path-wrapper">
+                                    <input type="text" name="resources_1" placeholder="/" aria-label="..." required>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            $(function () {
+                                // We get the button element with the newres class and if it does not have
+                                // the bound class, we will mark it and add the click listener
+                                // This is used in order to prevent multiple click listener binding
+                                // when a new target is added by cloning the html text and scripts
+                                $('.newres:not(.bound)').addClass('bound').click(function () {
+                                    var c = $(this).parent(".res_cont").clone()
+                                    c.find("button").each(function (index, elem) {
+                                        $(elem).css("visibility", "hidden");
+                                    })
+                                    $(this).closest(".resources").append(c);
+                                })
+                            });
+                        </script>
+                    </div>
+                    <div class="row">
+                        <div class="col l12 file-field input-field proxies">
+                            <div class="prox_cont">
+                                <button type="button" class="btn newpro">Add New Proxy</button>
+                                <div class="file-path-wrapper ">
+                                    <input type="text" name="proxy_1" placeholder="http://" aria-label="...">
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            $(function () {
+                                $(".newpro:not(.bound)").addClass("bound").click(function () {
+                                    var c = $(this).parent(".prox_cont").clone()
+                                    c.find("button").each(function (index, elem) {
+                                        $(elem).css("visibility", "hidden");
+                                    })
+                                    $(this).closest(".proxies").append(c);
+                                })
+                            });
+                        </script>
+                    </div>
+                    <div class="row">
+                        <div class="col l4 input-field">
+                            <label>Timeout</label>
+                            <input type="text" name="timeout_1" value="0.5" placeholder="Timeout"/>
+                        </div>
+                        <div class="col l4 input-field">
+                            <select name="method_1">
+                                <option value="GET" selected>GET</option>
+                                <option value="POST">POST</option>
+                            </select>
+                        </div>
+                        <div class="col l4 input-field">
+                            <select name="encoding_1">
+                                <option value="utf-8" selected>UTF-8</option>
+                                <option value="utf-8">---</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l4 input-field">
+                            <select name="AMPM_1">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                                <option value="AMPM">AM & PM</option>
+                            </select>
+                            <label>Choose day phase of the attack</label>
+                        </div>
+                        <div class="col l4 input-field">
+                            <label>Time Span: Start hour (HH format)</label>
+                            <input name="hour_start_1" type="text" placeholder="01">
+                        </div>
+                        <div class="col l4 input-field">
+                            <label>Time Span: End hour (HH format)</label>
+                            <input name="hour_end_1" type="text" placeholder="23">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l6 input-field">
+                            <select multiple name="avoid_week_1">
+                                <option value="" disabled selected>Choose the days to avoid</option>
+                                <option value="1">Monday</option>
+                                <option value="2">Tuesday</option>
+                                <option value="3">Wednesday</option>
+                                <option value="4">Thursday</option>
+                                <option value="5">Friday</option>
+                                <option value="6">Saturday</option>
+                                <option value="7">Sunday</option>
+                            </select>
+                            <label>Week day to avoid</label>
+                        </div>
+                        <div class="col l6 input-field">
+                            <select multiple name="avoid_month_1">
+                                <option value="" disabled selected>Choose the day of the month to avoid</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                                <option value="31">31</option>
+                            </select>
+                            <label>Day of the month to avoid</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l3 input-field">
+                            <label>Contact period in sec</label>
+                            <input type="text" name="period_1" placeholder="1" required>
+                        </div>
+                        <div class="col l3 input-field">
+                            <label>Maximum contacts</label>
+                            <input type="text" name="max_count_1" placeholder="1000" required>
+                        </div>
                     </div>
                 </div>
-                <script>
-                    $(function () {
-                        $(".newtarget").click(function () {
-                            $(this).closest(".resources").append('<button type="button" class="btn" style="visibility: hidden;">Add New Resource</button>');
-                            $(this).closest(".resources").append('<div class="file-path-wrapper"> <input type="text" name="resources" placeholder="/" aria-label="..."> </div>');
-                        })
-                    });
-                </script>
             </div>
-            <div class="row">
-                <div class="col l12 file-field input-field proxies">
-                    <button type="button" class="btn newproxy">Add New Proxy</button>
-                    <div class="file-path-wrapper ">
-                        <input type="text" name="proxy" placeholder="http://" aria-label="...">
-                    </div>
-                </div>
-                <script>
-                    $(function () {
-                        $(".newproxy").click(function () {
-                            $(this).closest(".proxies").append('<button type="button" class="btn" style="visibility: hidden;">Add New Proxy</button>');
-                            $(this).closest(".proxies").append('<div class="file-path-wrapper"> <input type="text" name="proxy" placeholder="http://" aria-label="..."> </div>');
-                        })
-                    });
-                </script>
-            </div>
-            <div class="row">
-                <div class="col l4 input-field">
-                    <label>Timeout</label>
-                    <input type="text" name="timeout" value="0.5" placeholder="Timeout"/>
-                </div>
-                <div class="col l4 input-field">
-                    <select name="method">
-                        <option value="GET" selected>GET</option>
-                        <option value="POST">POST</option>
-                    </select>
-                </div>
-                <div class="col l4 input-field">
-                    <select name="encoding">
-                        <option value="utf-8" selected>UTF-8</option>
-                        <option value="utf-8">---</option>
-                    </select>
-                </div>
-            </div>
-            <input style="display: none" type="text" name="attack" value="begin">
-        </div>
         </div>
     </form>
     <div class="wrapper" style="text-align: center;">
         <button id="add_new_target" type="button" class="btn">Add New Target</button>
     </div>
     <script>
-                $(function () {
-                    $("#add_new_target").click(function () {
-                        $("#configForm").append($("#target_params_wrapper").html());
-                    })
+        $(function () {
+            $("#add_new_target").click(function () {
+                var c = $("#target_params_wrapper").clone()
+                c.find("input").each(function (index, elem) {
+                    if (elem.name == "divider" || $(elem).hasClass("select-dropdown"))
+                        return;
+                    elem.name = elem.name.substring(0, elem.name.length - 2) + "_" + String(x);
                 })
-            </script>
+                c.find("select").each(function (index, elem) {
+                    elem.name = elem.name.substring(0, elem.name.length - 2) + "_" + String(x);
+                })
+                c.find("button").each(function (index, elem) {
+                    $(elem).removeClass("bound");
+                })
+                $("#target_container").append(c.html());
+
+                // Now we get the last h5 element inside the div with target_params class which is inside the target_container class
+                $("#target_container .target_params").find("h5").get(-1).textContent = "Target " + String(x) + " Configuration";
+
+                x += 1;
+            })
+        })
+    </script>
 
     <div style="float: right;">
         {#            <button type="submit" name="attack" value="begin" class="btn btn-primary btn-large">Carry attack</button>#}
@@ -234,20 +300,44 @@
                     $("#begin").click(function () {
                         var formArray = $("#configForm").serializeArray();
                         var data = {};
+                        var i = -1;
+                        var check = 0;
                         $(formArray).each(function (index, elem) {
-                            if (elem.name in data) {
-                                if ($.isArray(data[elem.name]))
-                                    data[elem.name].push(elem.value);
-                                else
-                                    var temp = data[elem.name]
-                                data[elem.name] = []
-                                data[elem.name].push(temp)
-                                data[elem.name].push(elem.value)
+                            console.log(elem.name)
+                            if (elem.name == "divider") {
+                                var target = {}
+                                if (i == -1) {
+                                    data['target'] = [];
+                                    data['target'].push(target);
+                                    i++
+                                } else {
+                                    data['target'].push(target);
+                                    i++;
+                                }
+                                console.log(i)
+                                return;
+                            }
+                            if (check == 0) {
+                                    data[elem.name] = elem.value
+                                if (elem.name == "log_file") {
+                                    check = 1;
+                                }
+                                return;
+                            }
+                            var name = elem.name.substring(0, elem.name.length - 2)
+                            if (name in data['target'][i]) {
+                                if ($.isArray(data['target'][i][name])) {
+                                    data['target'][i][name].push(elem.value);
+                                } else {
+                                    var temp = data['target'][i][name]
+                                    data['target'][i][name] = []
+                                    data['target'][i][name].push(temp)
+                                    data['target'][i][name].push(elem.value)
+                                }
                             } else {
-                                data[elem.name] = elem.value;
+                                data['target'][i][name] = elem.value;
                             }
                         });
-                        console.log(data);
                         $.ajax({
                             url: "/submit",
                             method: "POST",

@@ -19,7 +19,7 @@ rootSchema = {
     "last_modified" : round(time()),
     "cc_server"     : "",
     "user-agent_b"  : "ALLSAFE_UADEFAULT",
-    "log_file"      : "../data/log.txt",
+    "log_file"      : "./data/log.txt",
 
     "targets"       : []
 }
@@ -215,7 +215,7 @@ def validateActionConditions(action, schema):
     # note that it is not necessary to be set to carry the attack!
     at = 'attack_time'
     if at in action:
-        attackTime = map((lambda t: int(t) % (24 + 1)), action[at].split("-"))
+        attackTime = map((lambda t: int(t) % 24), action[at].split("-"))
         attackTime = list(attackTime)
         if len(attackTime) == 1:
             raise Exception("Wrong format for attack_time!")
@@ -227,7 +227,7 @@ def validateActionConditions(action, schema):
         action[aw] = schema[aw]
     else:
         for i in range(0, len(action[aw])):
-            action[aw][i] = int(action[aw][i]) % (7 + 1)
+            action[aw][i] = int(action[aw][i]) % 7
 
     # check for avoid month
     am = 'avoid_month'
@@ -235,7 +235,7 @@ def validateActionConditions(action, schema):
         action[am] = schema[am]
     else:
         for i in range(0, len(action[am])):
-            action[am][i] = int(action[am][i]) % (31 + 1)
+            action[am][i] = int(action[am][i]) % 31
     
     # finally we return action conditions
     return action
