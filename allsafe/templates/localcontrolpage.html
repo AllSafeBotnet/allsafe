@@ -246,122 +246,133 @@
                 </div>
             </div>
         </div>
-    </form>
-    <div class="wrapper" style="text-align: center;">
-        <button id="add_new_target" type="button" class="btn">Add New Target</button>
-    </div>
-    <script>
-        $(function () {
-            $("#add_new_target").click(function () {
-                var c = $("#target_params_wrapper").clone()
-                c.find("input").each(function (index, elem) {
-                    if (elem.name == "divider" || $(elem).hasClass("select-dropdown"))
-                        return;
-                    elem.name = elem.name.substring(0, elem.name.length - 2) + "_" + String(x);
-                })
-                c.find("select").each(function (index, elem) {
-                    elem.name = elem.name.substring(0, elem.name.length - 2) + "_" + String(x);
-                })
-                c.find("button").each(function (index, elem) {
-                    $(elem).removeClass("bound");
-                })
-                $("#target_container").append(c.html());
-
-                // Now we get the last h5 element inside the div with target_params class which is inside the target_container class
-                $("#target_container .target_params").find("h5").get(-1).textContent = "Target " + String(x) + " Configuration";
-
-                x += 1;
-            })
-        })
-    </script>
-
-    <div style="float: right;">
-        {#            <button type="submit" name="attack" value="begin" class="btn btn-primary btn-large">Carry attack</button>#}
-        <div class="fixed-action-btn">
-            <a class="modal-trigger btn-floating btn-large red waves-effect waves-light" href="#modal1">
-                <i class="material-icons">send</i>
-            </a>
+        <div class="wrapper" style="text-align: center;">
+            <button id="add_new_target" type="button" class="btn">Add New Target</button>
         </div>
-        <div id="modal1" class="modal modal-fixed-footer">
-            <div class="modal-content">
-                <h4>Attack confirmation</h4>
-                <p>Are you ready to perform an attack using our system?</p>
-                <div class="progress" style="visibility: hidden;">
-                    <div class="indeterminate"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" id="begin" class="modal-action waves-effect waves-green btn-flat ">Yes</a>
-                <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
-            </div>
+        <script>
+            $(function () {
+                $("#add_new_target").click(function () {
+                    var c = $("#target_params_wrapper").clone()
+                    c.find("input").each(function (index, elem) {
+                        if (elem.name == "divider" || $(elem).hasClass("select-dropdown"))
+                            return;
+                        elem.name = elem.name.substring(0, elem.name.length - 2) + "_" + String(x);
+                    })
+                    c.find("select").each(function (index, elem) {
+                        elem.name = elem.name.substring(0, elem.name.length - 2) + "_" + String(x);
+                    })
+                    c.find("button").each(function (index, elem) {
+                        $(elem).removeClass("bound");
+                    })
+                    $("#target_container").append(c.html());
 
-            <script>
-                $(function () {
-                    $("#begin").click(function () {
-                        var formArray = $("#configForm").serializeArray();
-                        var data = {};
-                        var i = -1;
-                        var check = 0;
-                        $(formArray).each(function (index, elem) {
-                            console.log(elem.name)
-                            if (elem.name == "divider") {
-                                var target = {}
-                                if (i == -1) {
-                                    data['target'] = [];
-                                    data['target'].push(target);
-                                    i++
-                                } else {
-                                    data['target'].push(target);
-                                    i++;
+                    // Now we get the last h5 element inside the div with target_params class which is inside the target_container class
+                    $("#target_container .target_params").find("h5").get(-1).textContent = "Target " + String(x) + " Configuration";
+
+                    x += 1;
+                })
+            })
+        </script>
+
+        <div style="float: right;">
+            {#            <button type="submit" name="attack" value="begin" class="btn btn-primary btn-large">Carry attack</button>#}
+            <div class="fixed-action-btn">
+                <a class="modal-trigger btn-floating btn-large red waves-effect waves-light" href="#modal1">
+                    <i class="material-icons">send</i>
+                </a>
+            </div>
+            <div id="modal1" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4>Attack confirmation</h4>
+                    <p>Are you ready to perform an attack using our system?</p>
+                    <div class="progress" style="visibility: hidden;">
+                        <div class="indeterminate"></div>
+                    </div>
+                    <p>
+                      <input type="checkbox" id="local_attack" name="local_attack"/>
+                      <label for="local_attack">Perform a local attack instead</label>
+                    </p>
+                    <br><br>
+                    <p id="result"></p>
+                </div>
+                <div class="modal-footer">
+
+                    <a href="#!" id="begin" class="modal-action waves-effect waves-green btn-flat ">Yes</a>
+                    <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
+                </div>
+
+                <script>
+                    $(function () {
+                        $("#begin").click(function () {
+                            $('.progress').css("visibility", "visible");
+                            var formArray = $("#configForm").serializeArray();
+                            var data = {};
+                            var i = -1;
+                            var check = 0;
+                            $(formArray).each(function (index, elem) {
+                                console.log(elem.name)
+                                if (elem.name == "divider") {
+                                    var target = {}
+                                    if (i == -1) {
+                                        data['target'] = [];
+                                        data['target'].push(target);
+                                        i++
+                                    } else {
+                                        data['target'].push(target);
+                                        i++;
+                                    }
+                                    console.log(i)
+                                    return;
                                 }
-                                console.log(i)
-                                return;
-                            }
-                            if (check == 0) {
+                                if (check == 0) {
                                     data[elem.name] = elem.value
-                                if (elem.name == "log_file") {
-                                    check = 1;
+                                    if (elem.name == "log_file") {
+                                        check = 1;
+                                    }
+                                    return;
                                 }
-                                return;
-                            }
-                            var name = elem.name.substring(0, elem.name.length - 2)
-                            if (name in data['target'][i]) {
-                                if ($.isArray(data['target'][i][name])) {
-                                    data['target'][i][name].push(elem.value);
+                                if (elem.name == "local_attack") {
+                                    data[elem.name] = elem.value
+                                    return;
+                                }
+                                var name = elem.name.substring(0, elem.name.length - 2)
+                                if (name in data['target'][i]) {
+                                    if ($.isArray(data['target'][i][name])) {
+                                        data['target'][i][name].push(elem.value);
+                                    } else {
+                                        var temp = data['target'][i][name]
+                                        data['target'][i][name] = []
+                                        data['target'][i][name].push(temp)
+                                        data['target'][i][name].push(elem.value)
+                                    }
                                 } else {
-                                    var temp = data['target'][i][name]
-                                    data['target'][i][name] = []
-                                    data['target'][i][name].push(temp)
-                                    data['target'][i][name].push(elem.value)
+                                    data['target'][i][name] = elem.value;
                                 }
-                            } else {
-                                data['target'][i][name] = elem.value;
-                            }
-                        });
-                        $.ajax({
-                            url: "/submit",
-                            method: "POST",
-                            data: JSON.stringify(data),
-                            dataType: "json",
-                            contentType: 'application/json; charset=utf-8',
-                            success: function (result) {
-                                $('.progress').css("visibility", "hidden");
-                                console.log("done");
-                                console.log(data);
-                            },
-                            progress: function () {
-                                $('.progress').css("visibility", "visible");
-                            },
-                            error: function () {
-                                console.log(data);
-                            }
+                            });
+                            $.ajax({
+                                url: "/submit",
+                                method: "POST",
+                                data: JSON.stringify(data),
+                                dataType: "json",
+                                contentType: 'application/json; charset=utf-8',
+                                success: function (result) {
+                                    $('.progress').css("visibility", "hidden");
+                                    console.log("done");
+                                    console.log(data);
+                                    $("#result").text("DONE").css("color","green");
+                                },
+                                error: function () {
+                                    $('.progress').css("visibility", "hidden");
+                                    console.log(data);
+                                    $("#result").text("AN ERROR OCCURRED").css("color","red");
+                                }
+                            });
                         });
                     });
-                });
-            </script>
+                </script>
+            </div>
         </div>
-    </div>
-
+    </form>
 </div>
 
 </body>
