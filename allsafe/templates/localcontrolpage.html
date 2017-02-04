@@ -129,7 +129,7 @@
                             <div class="prox_cont">
                                 <button type="button" class="btn newpro">Add New Proxy</button>
                                 <div class="file-path-wrapper ">
-                                    <input type="text" name="proxy_1" placeholder="http://" aria-label="...">
+                                    <input type="text" name="proxy_1" placeholder="http://" aria-label="..." required>
                                 </div>
                             </div>
                         </div>
@@ -148,16 +148,16 @@
                     <div class="row">
                         <div class="col l4 input-field">
                             <label>Timeout</label>
-                            <input type="text" name="timeout_1" value="0.5" placeholder="Timeout"/>
+                            <input type="text" name="timeout_1" value="0.5" placeholder="Timeout" required>
                         </div>
                         <div class="col l4 input-field">
-                            <select name="method_1">
+                            <select name="method_1" required>
                                 <option value="GET" selected>GET</option>
                                 <option value="POST">POST</option>
                             </select>
                         </div>
                         <div class="col l4 input-field">
-                            <select name="encoding_1">
+                            <select name="encoding_1" required>
                                 <option value="utf-8" selected>UTF-8</option>
                                 <option value="utf-8">---</option>
                             </select>
@@ -165,7 +165,7 @@
                     </div>
                     <div class="row">
                         <div class="col l4 input-field">
-                            <select name="AMPM_1">
+                            <select name="AMPM_1" required>
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
                                 <option value="AMPM">AM & PM</option>
@@ -174,7 +174,7 @@
                         </div>
                         <div class="col l4 input-field">
                             <label>Time Span: Start hour (HH format)</label>
-                            <input name="hour_start_1" type="text" placeholder="01">
+                            <input name="hour_start_1" type="text" placeholder="01" required>
                         </div>
                         <div class="col l4 input-field">
                             <label>Time Span: End hour (HH format)</label>
@@ -183,7 +183,7 @@
                     </div>
                     <div class="row">
                         <div class="col l6 input-field">
-                            <select multiple name="avoid_week_1">
+                            <select multiple name="avoid_week_1" required>
                                 <option value="" disabled selected>Choose the days to avoid</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -196,7 +196,7 @@
                             <label>Week day to avoid</label>
                         </div>
                         <div class="col l6 input-field">
-                            <select multiple name="avoid_month_1">
+                            <select multiple name="avoid_month_1" required>
                                 <option value="" disabled selected>Choose the day of the month to avoid</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -309,8 +309,12 @@
                             var data = {};
                             var i = -1;
                             var check = 0;
+                            var valid;
                             $(formArray).each(function (index, elem) {
-                                console.log(elem.name)
+                                if (elem.value == "") {
+                                    $("#result").text(elem.name + " has no value. Please fill all fields").css("color","orange");
+                                    return valid = false;
+                                }
                                 if (elem.name == "divider") {
                                     var target = {}
                                     if (i == -1) {
@@ -348,7 +352,14 @@
                                 } else {
                                     data['target'][i][name] = elem.value;
                                 }
+                                return valid = true
                             });
+
+                            if (valid == false) {
+                                $('.progress').css("visibility", "hidden");
+                                return false;
+                            }
+
                             $.ajax({
                                 url: "/submit",
                                 method: "POST",
