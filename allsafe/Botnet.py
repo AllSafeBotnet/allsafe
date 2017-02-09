@@ -36,9 +36,10 @@ class AllSafeBotnet():
         """
         Method to start a new attack session.
         @param: configuration, string - path to the configuration file
+        @param: override, boolean - whenever to override the configuration file
         @return: a tuple (identification, attack_statistics_dictionary, attack_counter)
         """
-        self._botnet_instance = self.Botnet(configuration, self._botnet_queue)
+        self._botnet_instance = self.Botnet(configuration, self._botnet_queue, override)
 
         botnet = self._botnet_instance
         botnet.start()
@@ -91,7 +92,7 @@ class AllSafeBotnet():
 
 
     class Botnet(Process):
-        def __init__(self, configuration, queue, name='AllSafeBotnetInstance', override=False):
+        def __init__(self, configuration, queue, override=False, name='AllSafeBotnetInstance'):
             super().__init__(name=name)
             self._queue          = queue
             self._configuration  = configuration
