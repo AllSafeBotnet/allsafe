@@ -64,7 +64,7 @@
     <h3>Local Admin Panel</h3>
 
     <form method="POST" id="configForm" action="/submit" style="margin: 5% 10% 0% 10%;">
-        <input style="display: none" type="text" name="attack" value="begin">
+        <!-- <input style="display: none" type="text" name="attack" value="begin"> -->
         <div id="global_config_continer" class="section container">
             <h5>Global Configuration</h5>
             <div class="row col l12 input-field">
@@ -115,10 +115,10 @@
                                 // This is used in order to prevent multiple click listener binding
                                 // when a new target is added by cloning the html text and scripts
                                 $('.newres:not(.bound)').addClass('bound').click(function () {
-                                    var c = $(this).parent(".res_cont").clone()
+                                    var c = $(this).parent(".res_cont").clone();
                                     c.find("button").each(function (index, elem) {
                                         $(elem).css("visibility", "hidden");
-                                    })
+                                    });
                                     $(this).closest(".resources").append(c);
                                 })
                             });
@@ -168,21 +168,21 @@
                             <select name="AMPM_1" required>
                                 <option value="AM">AM</option>
                                 <option value="PM">PM</option>
-                                <option value="AMPM">AM & PM</option>
+                                <option value="AMPM" selected>AM & PM</option>
                             </select>
                             <label>Choose day phase of the attack</label>
                         </div>
                         <div class="col l4 input-field">
                             <label>Time Span: Start hour (HH format)</label>
-                            <input name="hour_start_1" type="text" placeholder="01" required>
+                            <input name="hour_start_1" type="text" value="1" required>
                         </div>
                         <div class="col l4 input-field">
                             <label>Time Span: End hour (HH format)</label>
-                            <input name="hour_end_1" type="text" placeholder="23">
+                            <input name="hour_end_1" type="text" value="23">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col l6 input-field">
+                        <div class="col l6 input-field" >
                             <select multiple name="avoid_week_1" required>
                                 <option value="" disabled selected>Choose the days to avoid</option>
                                 <option value="1">Monday</option>
@@ -236,11 +236,11 @@
                     <div class="row">
                         <div class="col l3 input-field">
                             <label>Contact period in sec</label>
-                            <input type="text" name="period_1" placeholder="1" required>
+                            <input type="text" name="period_1" value="1" required>
                         </div>
                         <div class="col l3 input-field">
                             <label>Maximum contacts</label>
-                            <input type="text" name="max_count_1" placeholder="1000" required>
+                            <input type="text" name="max_count_1" value="1000" required>
                         </div>
                     </div>
                 </div>
@@ -316,7 +316,7 @@
             <script>
                 $(function () {
                     $("#autopilot_start").click(function () {
-                        data = {"autopilot_start":"true","attack":"begin","contact_time":$("#contact_time").val(),
+                        data = {"autopilot_start":"true", "contact_time":$("#contact_time").val(),
                                 "cc_server_auto":$("#cc_server_auto").val()}
                         $.ajax({
                             url: "/submit",
@@ -353,6 +353,7 @@
                 <div class="modal-footer">
                     <a href="#!" id="begin" class="modal-action waves-effect waves-green btn-flat ">Yes</a>
                     <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
+                    <a href="#!" id="abort" class="modal-action waves-effect waves-green btn-flat disabled">Abort</a>
                 </div>
 
                 <script>
@@ -365,7 +366,11 @@
                             var check = 0;
                             var valid;
                             $(formArray).each(function (index, elem) {
+                                if (elem.name == "contact_time" || elem.name.indexOf('proxy') >= 0)
+                                    return;
+
                                 if (elem.value == "" && elem.name != "divider") {
+                                    console.log("ECCO: " + elem.name);
                                     $("#result").text(elem.name + " has no value. Please fill all fields").css("color", "orange");
                                     return valid = false;
                                 }
@@ -412,6 +417,11 @@
                             if (valid == false) {
                                 $('.progress').css("visibility", "hidden");
                                 return false;
+                            }
+
+                            if (valid) {
+                                $('#begin').css("disabled", "true");
+                                $('#abort').css("disabled", "false");
                             }
 
                             $.ajax({
