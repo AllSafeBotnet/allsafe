@@ -148,11 +148,16 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
 
         if 'resources' in elem:
             if isinstance(elem['resources'],list):
+                for res in elem['resources']:
+                    if res[0] != "/":
+                        res = "/" + res
                 localRequestSchema['resources'] = elem['resources']
             else:
+                if elem['resources'][0] != "/":
+                    elem['resources'] = "/" + elem['resources']
                 localRequestSchema['resources'] = [elem['resources']]
         else:
-            localRequestSchema['resources'] = []
+            localRequestSchema['resources'] = ["/"]
 
         localRequestSchema['encoding'] = elem['encoding'] if 'encoding' in elem else ""
 
