@@ -17,6 +17,7 @@ from flask import redirect
 
 from time import time
 import sys
+import copy
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -85,8 +86,7 @@ def performAttack():
 
 def prepareConfigFile(params, where='./data/current_attack.json'):
 
-    print("ROOT", rootSchema)
-    localRootSchema = rootSchema
+    localRootSchema = copy.copy(rootSchema)
 
     # Only the useful key values will be changed accordingly
     localRootSchema['last_modified'] = round(time())
