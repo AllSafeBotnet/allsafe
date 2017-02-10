@@ -17,7 +17,6 @@ from flask import redirect
 
 from time import time
 import sys
-import copy
 
 import requests
 from requests.auth import HTTPBasicAuth
