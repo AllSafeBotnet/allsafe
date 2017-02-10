@@ -75,7 +75,7 @@ def validateConfigFile(config_file, override, ccserver=None):
             configuration[setting] = rootSchema[setting]
 
     # 1. check for updates connecting to C&C (if not override option is enabled)
-    if (not override) 
+    if (not override):
         # check for ccserver address 
         ccserveraddr = ccserver
         if (len(configuration['cc_server']) != 0) and (ccserver is None):
