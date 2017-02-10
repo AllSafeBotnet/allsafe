@@ -235,8 +235,12 @@
                     </div>
                     <div class="row">
                         <div class="col l3 input-field">
-                            <label>Contact period in sec</label>
-                            <input type="text" name="period_1" value="1" required>
+                            <label>Contact period in sec (min value)</label>
+                            <input type="text" name="min_period_1" value="1" required>
+                        </div>
+                        <div class="col l3 input-field">
+                            <label>Contact period in sec (max value)</label>
+                            <input type="text" name="max_period_1" value="5" required>
                         </div>
                         <div class="col l3 input-field">
                             <label>Maximum contacts</label>
@@ -374,6 +378,25 @@
 
             <script>
                 $(function () {
+                    $("#abort").click(function () {
+                        $.ajax({
+                            url: "/abort",
+                            method: "POST",
+                            data: {},
+                            timeout: 0,
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (result) {
+                                $('.progress').css("visibility", "hidden");
+                                $("#result").text("ABORT SUCCESS").css("color", "green");
+                                $('#begin').removeClass("disabled");
+                                $('#abort').addClass("disabled");
+                            },
+                            error: function () {
+                                $("#result").text("SOMETHING WENT WRONG").css("color", "red");
+                            }
+                        });
+                    })
+
                     $("#begin").click(function () {
                         $('.progress').css("visibility", "visible");
                         $("#result").text("");
@@ -439,8 +462,8 @@
                         }
 
                         if (valid) {
-                            $('#begin').css("disabled", "true");
-                            $('#abort').css("disabled", "false");
+                            $('#begin').addClass("disabled");
+                            $('#abort').removeClass("disabled");
                         }
 
                         $.ajax({
