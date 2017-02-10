@@ -81,24 +81,28 @@ def performAttack():
             allsafe.attack(config_path, override=False)
             # return success
         return "OK", 200
-    except Exception:
+    except Exception as e:
+        print(str(e))
         return "Invalid request", 402
 
 def prepareConfigFile(params, where='./data/current_attack.json'):
 
-    localRootSchema = copy.copy(rootSchema)
+    localRootSchema = dict()
 
     # Only the useful key values will be changed accordingly
     localRootSchema['last_modified'] = round(time())
     localRootSchema['cc_server'] = params['cc_server'] if 'cc_server' in params else ""
+    localRootSchema['log_file'] = './data/log.txt'
+    localRootSchema['user-agent_b'] = "PROVETTA"
+    localRootSchema['targets'] = []
 
     # Creation of the requestSchema
     for elem in params['target']:
         # Creation of the locaTargetSchema based upon the TargetSchema
-        localTargetSchema = targetSchema
-        localTargetSchema['period'] = elem['period'] if 'period' in elem else 0
-        localTargetSchema['max_count'] = elem['max_count'] if 'max_count' in elem else 0
-
+        localTargetSchema = dict()
+        localTargetSchema['period'] = int(elem['period']) if 'period' in elem else 0
+        localTargetSchema['max_count'] = int(elem['max_count']) if 'max_count' in elem else 0
+        localTargetSchema['sessions'] = 1
         # Creation of the actionCondition dictionary
         actionConditions = OrderedDict()
 
@@ -135,24 +139,36 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
             actionConditions['avoid_week'] = []
 
 
-        # ActionConditions is now poart of the localTargetSchema
+        # ActionConditions is now part of the localTargetSchema
         localTargetSchema['action_conditions'] = actionConditions
 
-        localRequestSchema = requestSchema
+        localRequestSchema = dict()
         localRequestSchema['method'] = elem['method'] if 'method' in elem else ""
         localRequestSchema['url'] = elem['url'] if 'url' in elem else ""
-        localRequestSchema['resources'] = elem['resources'] if 'resources' in elem else ""
+
+        if 'resources' in elem:
+            if isinstance(elem['resources'],list):
+                localRequestSchema['resources'] = elem['resources']
+            else:
+                localRequestSchema['resources'] = [elem['resources']]
+        else:
+            localRequestSchema['resources'] = []
+
         localRequestSchema['encoding'] = elem['encoding'] if 'encoding' in elem else ""
 
         # Creation of the proxy dictionary
         proxy = OrderedDict()
 
         # If an element has been specified as https, it will be handeld properly
-        for proxy_elem in elem['proxy']:
-            if "https://" in proxy_elem:
-                proxy['https'] = proxy_elem
-            else:
-                proxy['http'] = proxy_elem
+        if ('proxy' in elem):
+            for proxy_elem in elem['proxy']:
+                if "https://" in proxy_elem:
+                    proxy['https'] = proxy_elem
+                else:
+                    proxy['http'] = proxy_elem
+        else:
+            proxy['https'] = ''
+            proxy['http'] = ''
 
         # Proxy is now part of localRequestSchema
         localRequestSchema['proxy_server'] = proxy
@@ -160,7 +176,7 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
         # Final combination of the three schemas
         localTargetSchema['request_params'] = localRequestSchema
         localRootSchema['targets'].append(localTargetSchema)
-    
+
     #The json configuration will be written
     file = open(where, "w")
     file.write(json.dumps(localRootSchema,indent=4))

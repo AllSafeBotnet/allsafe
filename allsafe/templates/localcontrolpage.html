@@ -380,7 +380,7 @@
                         var valid;
 
                         $(formArray).each(function (index, elem) {
-                            if (elem.name == "contact_time" || elem.name == "cc_server_auto") {
+                            if (elem.name == "contact_time" || elem.name == "cc_server_auto" || elem.name.indexOf("proxy") >= 0) {
                                 return;
                             }
                             if (elem.value == "" && elem.name != "divider") {
@@ -443,7 +443,7 @@
                             url: "/submit",
                             method: "POST",
                             data: JSON.stringify(data),
-                            dataType: "json",
+                            timeout: 0,
                             contentType: 'application/json; charset=utf-8',
                             success: function (result) {
                                 $('.progress').css("visibility", "hidden");
