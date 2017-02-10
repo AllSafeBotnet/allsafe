@@ -118,8 +118,23 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
             actionConditions['attack_time'] = ""
         else:
             actionConditions['attack_time'] = elem['hour_start'] + "-" + elem['hour_end']
-        actionConditions['avoid_week'] = elem['avoid_week'] if 'avoid_week' in params else ""
-        actionConditions['avoid_month'] = elem['avoid_month'] if 'avoid_month' in params else ""
+
+        if 'avoid_month' in elem:
+            if isinstance(elem['avoid_month'],list):
+                actionConditions['avoid_month'] = elem['avoid_month']
+            else:
+                actionConditions['avoid_month'] = [elem['avoid_month']]
+        else:
+            actionConditions['avoid_month'] = []
+
+        if 'avoid_week' in elem:
+            if isinstance(elem['avoid_week'],list):
+                actionConditions['avoid_week'] = elem['avoid_week']
+            else:
+                actionConditions['avoid_week'] = [elem['avoid_week']]
+        else:
+            actionConditions['avoid_week'] = []
+
 
         # ActionConditions is now poart of the localTargetSchema
         localTargetSchema['action_conditions'] = actionConditions
