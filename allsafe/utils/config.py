@@ -90,6 +90,8 @@ def validateConfigFile(config_file, override, ccserver=None):
                     if not updateConfigFile(config_file, configuration):
                         return None
                     break
+        else:
+            return None
 
             
     

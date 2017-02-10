@@ -384,7 +384,6 @@
                                 return;
                             }
                             if (elem.value == "" && elem.name != "divider") {
-                                console.log("ECCO: " + elem.name);
                                 if (!($("#local_attack").is(":checked") && check == 0)) {
                                     $("#result").text(elem.name + " has no value. Please fill all fields").css("color", "orange");
                                     return valid = false;

