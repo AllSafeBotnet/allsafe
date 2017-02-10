@@ -55,6 +55,8 @@ class Request():
         # polishing url
         if '://' not in self._url:
             self._url = 'http://' + self._url
+        if self._url[len(self._url)-1] == '/':
+            self._url = self._url[:len(self._url)-1]
 
         # updating the session if necessary
         if self._proxies:
@@ -62,12 +64,15 @@ class Request():
         # iterating over resources to perform sequential requests
         # toward different resources from a unique session
         for resource in self._resources:
+            if resource[0] != '/':
+                resource = '/' + resource
+
             # creation of the request container
             req = requests.Request()
             
             # parameters setting
             req.method = self._method
-            req.url = self._url
+            req.url = self._url + resource
             req.data = self._payload  #TODO write because data and params use payload
             req.params = self._payload
             req.headers = self._header

@@ -183,10 +183,6 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
     file.close()
     return params['cc_server']
 
-@app.route("/p")
-def ret():
-    return render_template("targetpreferences.html")
-
 
 if __name__ == "__main__":
     print("-------------------------------------------------------------")
