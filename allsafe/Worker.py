@@ -208,7 +208,7 @@ class AllSafeWorkerMaster():
         syssummary  = "system:  " + self._sysstats.getPlatformSummary() + "\n"
         syssummary += "environ: " + self._sysstats.getEnvironmentSummary() + "\n"
         # printing in log
-        logInfo(self._log, "\nSYSTEM STATISTICS: \n" + syssummary)
+        # logInfo(self._log, "\nSYSTEM STATISTICS: \n" + syssummary)
 
         # logging the initialization routine - end
         logInfo(self._log, "------------------- </SETUP> -------------------")
@@ -239,11 +239,7 @@ class AllSafeWorkerMaster():
         # recording end time
         end_time = time()
 
-        # logging the attack
-        logAttack(self._log, self._workers_log)
-
-        # retrieving statistics
-        return {
+        resume = {
             # attack statistics
             "targets" : len(self._targets),
             "workers" : len(self._workers_log.keys()),
@@ -252,3 +248,9 @@ class AllSafeWorkerMaster():
             "system"  : self._sysstats.getPlatformSummary(),
             "environ" : self._sysstats.getEnvironmentSummary()
         }
+
+        # logging the attack
+        logAttack(self._log, self._workers_log, resume)
+
+        # retrieving statistics
+        return resume

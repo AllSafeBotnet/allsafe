@@ -10,7 +10,7 @@ from multiprocessing import Process, Queue
 from time import sleep as threadSleep
 
 from utils.log import logCCUpdate
-import os
+import os, json
 
 from Worker import AllSafeWorkerMaster
 
@@ -25,7 +25,7 @@ class AllSafeBotnet():
         self._attack_counter  = 0
         self._attempt_counter = 0
         # initiliazing botnet client unique id
-        self._botnet_identity = str(hash(os.path.expanduser('~')))
+        self._botnet_identity = str(abs(hash(os.path.expanduser('~'))))
         # initializing queue 
         self._botnet_queue    = Queue()
         # botnet instance
@@ -88,7 +88,7 @@ class AllSafeBotnet():
                         self._attempt_counter += 1
 
             threadSleep(timer)
-            
+
 
 
 

@@ -9,7 +9,7 @@ Created:    27 December 2016
 Modified:   14 January  2017
 """
 from datetime import datetime 
-import requests
+import requests, json
 
 
 def logInfo(log_file, message, attack=False):
@@ -36,14 +36,14 @@ def logInfo(log_file, message, attack=False):
     
     return
 
-def logAttack(log_file, attack_dict):
+def logAttack(log_file, attack_dict, attack_resume):
     """
     This function prepare in a single message the entire story for the attack
     formatting it properly 
 
     @param: log_file, string - file path to the .log or .txt file
-    @param: message, string  - message to append to the log file
-    @param: attack, boolean  - (optional) override message formatting printing attack logs
+    @param: attack_dict, dictionary - workers attack dictionary
+    @param: attack_resume, dictionary  - attack resume dictionary
     """
     
     attackStory = "[ {0} ] ------------------- <ATTACK > -------------------\n".format(str(datetime.utcnow()))
@@ -61,6 +61,9 @@ def logAttack(log_file, attack_dict):
         attackStory += "[" + str(round(entry[0])) + "] => " + entry[1] + "\n"
 
     attackStory += "[ {0} ] ------------------- </ATTACK > -------------------\n".format(str(datetime.utcnow()))
+    attackStory += "[ {0} ] ------------------- <RESUME > -------------------\n".format(str(datetime.utcnow()))
+    attackStory += json.dumps(attack_resume, indent=4) + "\n"
+    attackStory += "[ {0} ] ------------------- </RESUME > -------------------\n".format(str(datetime.utcnow()))
     attackStory += "\n\n\n"
 
     #when attack story is complete, we write it into the log file

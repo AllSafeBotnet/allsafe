@@ -55,6 +55,12 @@
         $(document).ready(function () {
             $('select').material_select();
             $('.modal').modal();
+            $.getJSON("/getconfig", function (json) {
+                $("input[name='cc_server']").attr('value',json['cc_server'])
+                $("input[name='user_agent']").attr('value',json['user-agent_b'])
+                $("input[name='log_file']").attr('value',json['log_file'])
+                Materialize.updateTextFields()
+            })
         });
     </script>
 </head>
@@ -341,7 +347,7 @@
                         url: "/submit",
                         method: "POST",
                         data: JSON.stringify(data),
-                        dataType: "json",
+                        timeout: 0,
                         contentType: 'application/json; charset=utf-8',
                         success: function (result) {
                             $("#alert_modal2").text("BOT SET IN AUTOPILOT MODE").css("color", "green");
@@ -477,11 +483,15 @@
                                 console.log("done");
                                 console.log(data);
                                 $("#result").text("DONE").css("color", "green");
+                                $('#begin').removeClass("disabled");
+                                $('#abort').addClass("disabled");
                             },
                             error: function () {
                                 $('.progress').css("visibility", "hidden");
                                 console.log(data);
                                 $("#result").text("AN ERROR OCCURRED").css("color", "red");
+                                $('#begin').removeClass("disabled");
+                                $('#abort').addClass("disabled");
                             }
                         });
                     });
