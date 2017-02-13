@@ -55,6 +55,7 @@
         $(document).ready(function () {
             $('select').material_select();
             $('.modal').modal();
+            $('.tooltipped').tooltip({delay: 50});
             $.getJSON("/getconfig", function (json) {
                 $("input[name='cc_server']").attr('value',json['cc_server'])
                 $("input[name='user_agent']").attr('value',json['user-agent_b'])
@@ -318,15 +319,15 @@
                         </div>
                         <div class="input-field" style="margin-top: 5%">
                             <label>C&C server address</label>
-                            <input type="text" id="cc_server_auto" style="color: black" name="contact_time">
+                            <input type="text" id="cc_server_auto" style="color: black" name="cc_server_auto">
                         </div>
                         <br><br>
                         <p id="alert_modal2"></p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="#!" id="autopilot_start" class="modal-action waves-effect waves-green btn-flat">Yes</a>
-                    <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
+                    <a id="autopilot_start" class="modal-action waves-effect waves-green btn-flat">Yes</a>
+                    <a class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
                 </div>
             </div>
         </div>
@@ -348,16 +349,15 @@
                         method: "POST",
                         data: JSON.stringify(data),
                         timeout: 0,
-                        contentType: 'application/json; charset=utf-8',
-                        success: function (result) {
-                            $("#alert_modal2").text("BOT SET IN AUTOPILOT MODE").css("color", "green");
-                        },
-                        error: function () {
-                            $("#alert_modal2").text("AN ERROR OCCURRED").css("color", "red");
-                        }
+                        contentType: 'application/json; charset=utf-8'
                     });
                     return;
                 })
+                $("#autopilot_start").click(function () {
+                    $("#modal2").modal("close");
+                    Materialize.toast("Modal set in AUTOPILOT MODE", 4000)
+                })
+
             })
         </script>
 
@@ -377,9 +377,9 @@
                 <p id="result"></p>
             </div>
             <div class="modal-footer">
-                <a href="#!" id="begin" class="modal-action waves-effect waves-green btn-flat ">Yes</a>
-                <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
-                <a href="#!" id="abort" class="modal-action waves-effect waves-green btn-flat disabled">Abort</a>
+                <a id="begin" class="modal-action waves-effect waves-green btn-flat ">Yes</a>
+                <a class="modal-action modal-close waves-effect waves-red btn-flat ">No</a>
+                <a id="abort" class="modal-action waves-effect waves-green btn-flat disabled">Abort</a>
             </div>
 
             <script>
