@@ -35,7 +35,7 @@ targetSchema = {
 requestSchema = {
     "method"        : "GET",
     "url"           : "",
-    "resources"     : ["/", "/index.html"],
+    "resources"     : ["/"],
     "proxy_server"  : { "http" : "", "https" : "" },
     "user-agent"    : rootSchema['user-agent_b'],
     "encoding"      : "UTF-8",
@@ -271,7 +271,7 @@ def validateRequestParams(request, schema):
         raise Exception('No url specified!')
         return None
     if ('resources' not in request) or (len(request['resources']) < 1):
-        raise Exception('At least two resources are needed to start the attack!')
+        raise Exception('At least one resource is needed to start the attack!')
         return None
     # validating url and resources
     url = request['url']

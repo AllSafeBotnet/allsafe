@@ -413,8 +413,8 @@
 
                         // for each element in the form array
                         $(formArray).each(function (index, elem) {
-                            //the element proper of the autopilot mode will not be checked as well as proxies (which are not mandatory)
-                            if (elem.name == "contact_time" || elem.name == "cc_server_auto" || elem.name.indexOf("proxy") >= 0) {
+                            //the element proper of the autopilot mode will not be checked as well as proxies and resources (which are not mandatory)
+                            if (elem.name == "contact_time" || elem.name == "cc_server_auto" || elem.name.indexOf("proxy") >= 0 || elem.name.indexOf("resources") >= 0) {
                                 return;
                             }
                             // if an input has no value and its not a divider
