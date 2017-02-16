@@ -3,7 +3,7 @@ This is the script that will handle the request to the endpoint
 and that will use the JSON configuration file given.
 
 Created:     13 November 2016 
-Modified:    30 December 2016
+Modified:    16 February 2017
 """
 
 import requests
@@ -31,6 +31,7 @@ class Request():
         self._response       = config_dict['response']
         self._responseheader = config_dict['response-header']
         self._proxies        = config_dict['proxy_server']
+        self._timeout        = config_dict['timeout']
 
 
 
@@ -78,7 +79,7 @@ class Request():
             req.headers = self._header
 
             # request performs
-            r = s.send(req.prepare(),timeout=0.5)
+            r = s.send(req.prepare(),timeout=self._timeout)
 
             # based on the preferences the response will be given
             #if (self._response == "json"):

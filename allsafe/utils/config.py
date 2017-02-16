@@ -5,7 +5,7 @@ It will provide access to the Command-and-Control server as well as
 the validation for the configuration dictionary.
 
 Created:    29 December 2016
-Modified:   14 January  2017
+Modified:   16 February 2017
 """
 
 import json
@@ -41,7 +41,8 @@ requestSchema = {
     "encoding"      : "UTF-8",
     "payload"       : {},
     "response"      : "raw",
-    "response-header" : 0
+    "response-header" : 0,
+    "timeout"       : 0.5
 }
 
 def validateConfigFile(config_file, override, ccserver=None):
@@ -284,7 +285,7 @@ def validateRequestParams(request, schema):
             resources[res_id] = res[1:]
 
     # check if the other params are to be set or custom
-    for param in ['method', 'user-agent', 'encoding', 'payload', 'proxy_server', 'response', 'response-header']:
+    for param in ['method', 'user-agent', 'encoding', 'payload', 'proxy_server', 'response', 'response-header','timeout']:
         if param not in request:
             request[param] = schema[param]
     

@@ -6,7 +6,7 @@ Python 3.4.x version of the interpreter.
 Authors:    Alessio "Tyrell" Moretti & Federico "Elliot" Vagnoni
 Version:    0.1.0
 Created:    24 October 2016
-Modified:   09 February 2017
+Modified:   16 February 2017
 """
 
 from flask import Flask
@@ -172,6 +172,7 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
         localRequestSchema['method'] = elem['method'] if 'method' in elem else ""
         localRequestSchema['url'] = elem['url'] if 'url' in elem else ""
         localRequestSchema['user-agent'] = params['user_agent'] if 'user_agent' in params else ""
+        localRequestSchema['timeout'] = float(elem['timeout']) if 'timeout' in elem else 0.5
 
         if 'resources' in elem:
             if isinstance(elem['resources'],list):

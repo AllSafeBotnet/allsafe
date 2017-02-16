@@ -27,7 +27,8 @@
                 },
                 "encoding": "utf-8",
                 "response": "raw",
-                "response-header": 0
+                "response-header": 0,
+                "timeout" : 0.5
             },
 
             "sessions" : 1
