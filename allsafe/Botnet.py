@@ -103,7 +103,6 @@ class AllSafeBotnet():
             try:
                 self._allsafe_master = AllSafeWorkerMaster(self._configuration, override=self._override_conf, ccserver = self._ccserver)
             except Exception as e:
-                print(str(e))
                 raise Exception("Error in Botnet initialization!")
 
         def run(self):

@@ -395,27 +395,41 @@
                     })
 
                     $("#begin").click(function () {
+                        // show the progress bar
                         $('.progress').css("visibility", "visible");
+                        // clean result text
                         $("#result").text("");
+
+                        // formArray contains all form inputs but not in the way we wnant
                         var formArray = $("#configForm").serializeArray();
+                        // data will contain all inputs value in a correct way
                         var data = {};
+                        // i will maintain the count of the targets
                         var i = -1;
+                        // check will be 1 when the global params have been parsed
                         var check = 0;
+                        // boolean that check if the datas are valid or not
                         var valid;
 
+                        // for each element in the form array
                         $(formArray).each(function (index, elem) {
+                            //the element proper of the autopilot mode will not be checked as well as proxies (which are not mandatory)
                             if (elem.name == "contact_time" || elem.name == "cc_server_auto" || elem.name.indexOf("proxy") >= 0) {
                                 return;
                             }
+                            // if an input has no value and its not a divider
                             if (elem.value == "" && elem.name != "divider") {
-                                if (!($("#local_attack").is(":checked") && check == 0)) {
-                                    $("#result").text(elem.name + " has no value. Please fill all fields").css("color", "orange");
-                                    return valid = false;
-                                }
+                                //an error message will be returned and the form will not be considered as valid
+                                $("#result").text(elem.name + " has no value. Please fill all fields").css("color", "orange");
+                                return valid = false;
                             }
+                            // if we pass through a divider
                             if (elem.name == "divider") {
+                                // a new target json will be created
                                 var target = {}
+                                // if its the first target
                                 if (i == -1) {
+                                    // data['target'] will be initialized as an array
                                     data['target'] = [];
                                     data['target'].push(target);
                                     i++
@@ -423,46 +437,52 @@
                                     data['target'].push(target);
                                     i++;
                                 }
-                                console.log(i)
                                 return;
                             }
+                            // if we are still checking global params
                             if (check == 0) {
                                 data[elem.name] = elem.value
+                                // log_file is the last global param so check will be 1
                                 if (elem.name == "log_file") {
                                     check = 1;
                                 }
                                 return;
                             }
-                            if (elem.name == "local_attack") {
-                                data[elem.name] = elem.value
-                                return;
-                            }
+                            // now we get just the name of the input without the last two characters (that counts the target)
                             var name = elem.name.substring(0, elem.name.length - 2)
+                            // if the input is in the json
                             if (name in data['target'][i]) {
+                                // and it is an array yet
                                 if ($.isArray(data['target'][i][name])) {
+                                    // we push other values of it
                                     data['target'][i][name].push(elem.value);
+                                // or it will be converted as an array
                                 } else {
                                     var temp = data['target'][i][name]
                                     data['target'][i][name] = []
                                     data['target'][i][name].push(temp)
                                     data['target'][i][name].push(elem.value)
                                 }
+                            // if it's not, the new input will be added
                             } else {
                                 data['target'][i][name] = elem.value;
                             }
+                            // the form is eventually considered as valid
                             return valid = true
                         });
-
+                        // if it's not valid the progress bar will be hidden
                         if (valid == false) {
                             $('.progress').css("visibility", "hidden");
                             return false;
                         }
 
+                        // if it is valid, the button "begin" and "abort" will be disabled and enabled
                         if (valid) {
                             $('#begin').addClass("disabled");
                             $('#abort').removeClass("disabled");
                         }
 
+                        // we then perform the ajax request
                         $.ajax({
                             url: "/submit",
                             method: "POST",
@@ -470,16 +490,19 @@
                             timeout: 0,
                             contentType: 'application/json; charset=utf-8',
                             success: function (result) {
+                                // in case of success the progress bar will be hidden
+                                // a message will be shown
+                                // and the buttons restored
                                 $('.progress').css("visibility", "hidden");
-                                console.log("done");
-                                console.log(data);
                                 $("#result").text("DONE").css("color", "green");
                                 $('#begin').removeClass("disabled");
                                 $('#abort').addClass("disabled");
                             },
                             error: function () {
+                                // in case of failure the progress bar will be hidden
+                                // an error message will be shown
+                                // and the buttons restored
                                 $('.progress').css("visibility", "hidden");
-                                console.log(data);
                                 $("#result").text("AN ERROR OCCURRED").css("color", "red");
                                 $('#begin').removeClass("disabled");
                                 $('#abort').addClass("disabled");
