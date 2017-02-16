@@ -40,8 +40,11 @@ class SysStatistics:
         @return: string, summary of the exec environment
         """
         summary = ""
-        summary += "LANG : " + str(self._environ['LANG']) + " - "
-        summary += "HOME : " + str(self._environ['HOME']) + " - "
-        summary += "PWD : "  + str(self._environ['PWD'])  + " - "
+        try:
+            summary += "LANG : " + str(self._environ['LANG']) + " - "
+            summary += "HOME : " + str(self._environ['HOME']) + " - "
+            summary += "PWD : " + str(self._environ['PWD']) + " - "
+        except Exception:
+            summary = "CANNOT RETRIEVE ENVIRON INFORMATION"
 
         return summary
