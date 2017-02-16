@@ -57,7 +57,6 @@
             $('.modal').modal();
             $('.tooltipped').tooltip({delay: 50});
             $.getJSON("/getconfig", function (json) {
-                $("input[name='cc_server']").attr('value',json['cc_server'])
                 $("input[name='user_agent']").attr('value',json['user-agent_b'])
                 $("input[name='log_file']").attr('value',json['log_file'])
                 Materialize.updateTextFields()
@@ -74,10 +73,6 @@
         <!-- <input style="display: none" type="text" name="attack" value="begin"> -->
         <div id="global_config_continer" class="section container">
             <h5>Global Configuration</h5>
-            <div class="row col l12 input-field">
-                <label>C&C URL</label>
-                <input type="text" name="cc_server" aria-describedby="basic-addon1">
-            </div>
             <div class="row col l12 input-field">
                 <label>Custom User Agent</label>
                 <input type="text" name="user_agent" aria-describedby="basic-addon1">
@@ -355,7 +350,7 @@
                 })
                 $("#autopilot_start").click(function () {
                     $("#modal2").modal("close");
-                    Materialize.toast("Modal set in AUTOPILOT MODE", 4000)
+                    Materialize.toast("Bot set in AUTOPILOT MODE", 4000)
                 })
 
             })
@@ -365,14 +360,10 @@
         <div id="modal1" class="modal modal-fixed-footer">
             <div class="modal-content">
                 <h4>Attack confirmation</h4>
-                <p>Are you ready to perform an attack using our system?</p>
+                <p>Are you ready to perform an attack using this bot?</p>
                 <div class="progress" style="visibility: hidden;">
                     <div class="indeterminate"></div>
                 </div>
-                <p>
-                    <input type="checkbox" id="local_attack" name="local_attack"/>
-                    <label for="local_attack">Perform a local attack instead</label>
-                </p>
                 <br><br>
                 <p id="result"></p>
             </div>

